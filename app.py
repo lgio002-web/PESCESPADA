@@ -11,6 +11,9 @@ import pandas as pd
 from datetime import datetime, date
 import uuid
 import time
+from ui_assets import FLOOR_PLAN_SVG as ASSET_FLOOR_PLAN_SVG
+from ui_assets import LOGO_SMALL_SVG as ASSET_LOGO_SMALL_SVG
+from ui_assets import LOGO_SVG as ASSET_LOGO_SVG
 
 # ─────────────────────────────────────────────────────────────
 # CONFIGURAZIONE PAGINA
@@ -298,6 +301,10 @@ FLOOR_PLAN_SVG = """
 </svg>
 """
 
+LOGO_SVG = ASSET_LOGO_SVG
+LOGO_SMALL_SVG = ASSET_LOGO_SMALL_SVG
+FLOOR_PLAN_SVG = ASSET_FLOOR_PLAN_SVG
+
 
 # ─────────────────────────────────────────────────────────────
 # CSS
@@ -407,6 +414,22 @@ def inject_custom_css():
         section[data-testid="stSidebar"] {
             background: #141414 !important;
             border-right: 1px solid rgba(197, 165, 90, 0.15);
+            min-width: 540px !important;
+            max-width: 540px !important;
+        }
+        section[data-testid="stSidebar"] .block-container {
+            padding: 0.8rem 0.8rem 1rem 0.8rem !important;
+        }
+
+        .table-name {
+            text-align: center;
+            font-size: 0.72rem;
+            min-height: 1.4rem;
+            margin-top: 0.1rem;
+            margin-bottom: 0.35rem;
+            color: var(--gold-light);
+            font-weight: 600;
+            line-height: 1.15;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -608,6 +631,27 @@ def get_reservations_for_date_slot(df, target_date_str, time_slot):
     return df[mask]
 
 
+def get_reservations_for_date(df, target_date_str):
+    mask = df["Data"] == str(target_date_str)
+    return df[mask]
+
+
+def get_table_reservation_for_date(date_df, table_name, selected_slot):
+    table_rows = date_df[date_df["Tavolo"] == str(table_name)]
+    if table_rows.empty:
+        return None
+
+    exact_slot = table_rows[table_rows["Fascia_Oraria"] == str(selected_slot)]
+    if not exact_slot.empty:
+        return exact_slot.iloc[0]
+
+    slot_order = {slot: idx for idx, slot in enumerate(TIME_SLOTS)}
+    sortable = table_rows.copy()
+    sortable["_slot_order"] = sortable["Fascia_Oraria"].map(lambda value: slot_order.get(value, 999))
+    sortable = sortable.sort_values(["_slot_order", "Data_Creazione"], ascending=[True, True])
+    return sortable.iloc[0]
+
+
 # ─────────────────────────────────────────────────────────────
 # COMPONENTI UI
 # ─────────────────────────────────────────────────────────────
@@ -650,11 +694,15 @@ def render_stats(filtered_df):
 # ─────────────────────────────────────────────────────────────
 # MAPPA TAVOLI (bottoni interattivi)
 # ─────────────────────────────────────────────────────────────
-def render_table_map(filtered_df):
-    # Costruisce mappa occupazione: chiave = stringa tavolo
+def render_table_map(date_df, selected_slot):
     occupied_map = {}
-    for _, row in filtered_df.iterrows():
-        occupied_map[str(row["Tavolo"])] = str(row["Cliente"])
+    for table_name in ALL_TABLES:
+        reservation = get_table_reservation_for_date(date_df, table_name, selected_slot)
+        if reservation is not None:
+            occupied_map[str(table_name)] = {
+                "cliente": str(reservation["Cliente"]),
+                "fascia": str(reservation["Fascia_Oraria"]),
+            }
 
     for zone_name, zone_data in ZONES.items():
         color = zone_data["color"]
@@ -677,13 +725,14 @@ def render_table_map(filtered_df):
                 if table_idx >= len(tables):
                     break
                 table_name = tables[table_idx]  # sempre stringa dal dict ZONES
-                guest = occupied_map.get(table_name)
-                is_occupied = guest is not None
+                reservation = occupied_map.get(table_name)
+                is_occupied = reservation is not None
 
                 with cols[col_idx]:
                     if is_occupied:
-                        short_name = guest[:12] if len(guest) > 12 else guest
-                        label = f"🔴 {table_name}\n{short_name}"
+                        guest = reservation["cliente"]
+                        short_name = guest[:18] if len(guest) > 18 else guest
+                        label = f"🔴 {table_name}"
                     else:
                         label = f"🟢 {table_name}"
 
@@ -693,23 +742,34 @@ def render_table_map(filtered_df):
                         key=f"tbl_{zone_name}_{table_name}",
                         use_container_width=True,
                         type=btn_type,
-                        help=f"Prenotato: {guest}" if is_occupied else f"Tavolo {table_name} — libero",
+                        help=(
+                            f"Prenotato: {reservation['cliente']} · {reservation['fascia']}"
+                            if is_occupied else f"Tavolo {table_name} — libero"
+                        ),
                     ):
                         st.session_state.selected_table = table_name
                         st.session_state.show_modal = True
                         st.rerun()
 
+                    if is_occupied:
+                        st.markdown(
+                            f'<div class="table-name">{short_name}<br><span style="font-size:0.62rem;color:#9fb3c8;">{reservation["fascia"]}</span></div>',
+                            unsafe_allow_html=True,
+                        )
+                    else:
+                        st.markdown('<div class="table-name">&nbsp;</div>', unsafe_allow_html=True)
+
 
 # ─────────────────────────────────────────────────────────────
 # CRUD PANEL
 # ─────────────────────────────────────────────────────────────
-def render_crud_panel(filtered_df, selected_date, selected_slot):
+def render_crud_panel(date_df, selected_date, selected_slot):
     table_name = st.session_state.selected_table
     if not table_name:
         return
 
-    table_res = filtered_df[filtered_df["Tavolo"] == str(table_name)]
-    is_occupied = not table_res.empty
+    reservation = get_table_reservation_for_date(date_df, table_name, selected_slot)
+    is_occupied = reservation is not None
 
     # Zona
     table_zone = ""
@@ -737,7 +797,8 @@ def render_crud_panel(filtered_df, selected_date, selected_slot):
     """, unsafe_allow_html=True)
 
     if is_occupied:
-        reservation = table_res.iloc[0]
+        if str(reservation["Fascia_Oraria"]) != str(selected_slot):
+            st.info(f"Il tavolo e' occupato nella fascia {reservation['Fascia_Oraria']}.")
         _render_occupied(reservation, table_name, selected_date, selected_slot)
     else:
         _render_empty(table_name, selected_date, selected_slot)
@@ -916,19 +977,19 @@ def main_dashboard():
     # Dati
     df = load_reservations()
     selected_date_str = selected_date.strftime("%d-%m-%Y")
-    filtered_df = get_reservations_for_date_slot(df, selected_date_str, selected_slot)
+    date_df = get_reservations_for_date(df, selected_date_str)
 
-    render_stats(filtered_df)
+    render_stats(date_df)
 
     # CRUD Panel
     if st.session_state.show_modal and st.session_state.selected_table:
         with st.container(border=True):
-            render_crud_panel(filtered_df, selected_date, selected_slot)
+            render_crud_panel(date_df, selected_date, selected_slot)
         st.divider()
 
     # Mappa tavoli interattiva
-    st.caption("👇 Clicca un tavolo per prenotare o gestire")
-    render_table_map(filtered_df)
+    st.caption("👇 Clicca un tavolo per prenotare o gestire. Se occupato, sotto compare il nome della prenotazione.")
+    render_table_map(date_df, selected_slot)
 
     # DB completo (admin)
     st.divider()
