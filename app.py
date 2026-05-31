@@ -50,7 +50,7 @@ ZONES = {
         "icon": "☀️",
         "tables": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10"]
     },
-    "Bar": {
+    "Tiki Bar": {
         "color": "#A63D3D",
         "icon": "🍹",
         "tables": ["D1", "D2", "D3", "D4", "O1", "O2"]
@@ -77,209 +77,204 @@ SHEET_COLUMNS = [
 ]
 
 # ─────────────────────────────────────────────────────────────
-# LOGO SVG — Fedele al logo circolare Pesce Spada Beach Club
-# Colori: oro/sabbia (#C5A55A) su sfondo scuro, cerchio bianco
+# LOGO SVG — Pesce Spada Beach Club (pesce spada oro su fondo crema)
 # ─────────────────────────────────────────────────────────────
 LOGO_SVG = """
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
-  <circle cx="100" cy="100" r="95" fill="#FAF6EE" stroke="#C5A55A" stroke-width="2"/>
+<svg viewBox="0 0 260 80" xmlns="http://www.w3.org/2000/svg" width="220" height="68">
+  <rect width="260" height="80" rx="10" fill="#F5EFE4"/>
   <!-- Pesce spada stilizzato -->
-  <g transform="translate(30, 60)">
-    <path d="M5 40 C15 30 35 28 55 32 L105 32 C115 30 125 26 135 20
-             C128 30 125 35 120 37 L120 43 C125 45 128 50 135 60
-             C125 54 115 50 105 48 L55 48 C35 52 15 50 5 40 Z"
-          fill="#C5A55A" opacity="0.9"/>
-    <!-- Occhio -->
-    <circle cx="45" cy="40" r="3" fill="#2C2C2C"/>
-    <!-- Pinna dorsale -->
-    <path d="M70 32 L78 18 L86 32" fill="#C5A55A" opacity="0.6"/>
-    <!-- Pinna ventrale -->
-    <path d="M70 48 L78 62 L86 48" fill="#C5A55A" opacity="0.6"/>
+  <g transform="translate(8, 12)">
+    <!-- Corpo pesce -->
+    <path d="M35 28 C28 22 20 22 15 26 L6 28 C4 28 2 30 4 32
+             C6 34 15 36 20 35 C25 38 30 36 35 32 Z"
+          fill="#B8864A" opacity="0.9"/>
     <!-- Spada/rostro -->
-    <line x1="5" y1="40" x2="-8" y2="40" stroke="#C5A55A" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="6" y1="28" x2="0" y2="26" stroke="#B8864A" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Pinna dorsale -->
+    <path d="M22 22 L26 14 L30 22" fill="#B8864A" opacity="0.7"/>
+    <!-- Pinna caudale -->
+    <path d="M35 28 L42 22 L42 36 Z" fill="#B8864A" opacity="0.7"/>
+    <!-- Occhio -->
+    <circle cx="14" cy="29" r="1.5" fill="#3D3D3D"/>
+    <!-- Pinna ventrale -->
+    <path d="M22 36 L26 44 L30 36" fill="#B8864A" opacity="0.5"/>
   </g>
-  <!-- Testo PESCE SPADA -->
-  <text x="100" y="38" text-anchor="middle" font-family="Georgia, serif"
-        font-size="14" font-weight="bold" fill="#2C2C2C" letter-spacing="3">PESCE</text>
-  <text x="100" y="54" text-anchor="middle" font-family="Georgia, serif"
-        font-size="14" font-weight="bold" fill="#2C2C2C" letter-spacing="3">SPADA</text>
-  <!-- Testo BEACH CLUB -->
-  <text x="100" y="175" text-anchor="middle" font-family="Georgia, serif"
-        font-size="11" fill="#8B7D6B" letter-spacing="4">BEACH CLUB</text>
+  <!-- Testo -->
+  <text x="58" y="30" font-family="Georgia, serif" font-size="18" font-weight="bold"
+        fill="#B8864A" letter-spacing="1">PESCE</text>
+  <text x="58" y="52" font-family="Georgia, serif" font-size="18" font-weight="bold"
+        fill="#B8864A" letter-spacing="1">SPADA</text>
+  <text x="58" y="68" font-family="Georgia, serif" font-size="9"
+        fill="#8B7D6B" letter-spacing="3">BEACH CLUB</text>
+</svg>
+"""
+
+# Logo piccolo per header
+LOGO_SMALL_SVG = """
+<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" width="180" height="45">
+  <rect width="200" height="50" rx="8" fill="#F5EFE4"/>
+  <g transform="translate(6, 8)">
+    <path d="M25 18 C20 14 14 14 10 17 L4 18 C2 18 1 20 3 21
+             C5 22 10 23 14 22 C18 24 22 23 25 20 Z"
+          fill="#B8864A" opacity="0.9"/>
+    <line x1="4" y1="18" x2="0" y2="17" stroke="#B8864A" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M15 14 L18 9 L21 14" fill="#B8864A" opacity="0.7"/>
+    <path d="M25 18 L30 14 L30 23 Z" fill="#B8864A" opacity="0.7"/>
+    <circle cx="10" cy="19" r="1" fill="#3D3D3D"/>
+  </g>
+  <text x="42" y="22" font-family="Georgia, serif" font-size="13" font-weight="bold"
+        fill="#B8864A" letter-spacing="1">PESCE SPADA</text>
+  <text x="42" y="38" font-family="Georgia, serif" font-size="7"
+        fill="#8B7D6B" letter-spacing="2.5">BEACH CLUB</text>
 </svg>
 """
 
 # ─────────────────────────────────────────────────────────────
-# MAPPA SVG della sala — fedele al layout fisico
+# MAPPA SVG della sala — Layout Summer 2026 (dal PDF)
+# Solo per consultazione rapida, senza legenda
 # ─────────────────────────────────────────────────────────────
 FLOOR_PLAN_SVG = """
-<svg viewBox="0 0 620 900" xmlns="http://www.w3.org/2000/svg"
-     style="width:100%; height:auto; background:#1e1e1e; border-radius:12px; padding:8px;">
+<svg viewBox="0 0 640 760" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%; height:auto; background:#111; border-radius:10px; padding:6px;">
 
-  <!-- LOGO in alto a sinistra -->
-  <text x="10" y="20" font-family="Georgia, serif" font-size="10" fill="#C5A55A"
-        font-weight="bold">PESCE SPADA</text>
-  <text x="10" y="32" font-family="Inter, sans-serif" font-size="7" fill="#8B8B8B"
-        letter-spacing="2">BEACH CLUB</text>
+  <!-- Titolo -->
+  <text x="320" y="22" text-anchor="middle" font-family="Inter,sans-serif" font-size="10"
+        fill="#C5A55A" font-weight="bold" letter-spacing="2">LAYOUT SUMMER 2026</text>
 
   <!-- ═══ SPIAGGIA (blu) ═══ -->
-  <text x="90" y="55" font-family="Inter" font-size="9" fill="#3D7EA6"
-        font-weight="bold">SPIAGGIA</text>
-  <!-- Riga 1: S6, S7 -->
-  <rect x="60" y="62" width="70" height="45" rx="4" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="95" y="88" text-anchor="middle" font-family="Inter" font-size="11" fill="#3D7EA6">S6</text>
-  <rect x="200" y="62" width="80" height="50" rx="4" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="240" y="92" text-anchor="middle" font-family="Inter" font-size="11" fill="#3D7EA6">S7</text>
-  <!-- Riga 2: S5, S8 -->
-  <rect x="60" y="120" width="80" height="45" rx="4" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="100" y="147" text-anchor="middle" font-family="Inter" font-size="11" fill="#3D7EA6">S5</text>
-  <rect x="200" y="120" width="80" height="50" rx="4" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="240" y="150" text-anchor="middle" font-family="Inter" font-size="11" fill="#3D7EA6">S8</text>
+  <rect x="65" y="40" width="75" height="42" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="102" y="66" text-anchor="middle" font-size="11" fill="#3D7EA6" font-weight="600">S6</text>
+  <rect x="210" y="40" width="85" height="48" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="252" y="70" text-anchor="middle" font-size="11" fill="#3D7EA6" font-weight="600">S7</text>
 
-  <!-- Spiaggia laterale: S4, S3, S2, S1, S0 (colonna sinistra) -->
-  <rect x="10" y="240" width="45" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="32" y="260" text-anchor="middle" font-family="Inter" font-size="10" fill="#3D7EA6">S4</text>
-  <rect x="35" y="310" width="50" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="60" y="330" text-anchor="middle" font-family="Inter" font-size="10" fill="#3D7EA6">S3</text>
-  <rect x="35" y="440" width="50" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="60" y="460" text-anchor="middle" font-family="Inter" font-size="10" fill="#3D7EA6">S2</text>
-  <rect x="10" y="540" width="45" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="32" y="560" text-anchor="middle" font-family="Inter" font-size="10" fill="#3D7EA6">S1</text>
-  <rect x="10" y="380" width="45" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.5"/>
-  <text x="32" y="400" text-anchor="middle" font-family="Inter" font-size="10" fill="#3D7EA6">S0</text>
+  <rect x="65" y="98" width="80" height="42" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="105" y="124" text-anchor="middle" font-size="11" fill="#3D7EA6" font-weight="600">S5</text>
+  <rect x="210" y="98" width="85" height="48" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="252" y="128" text-anchor="middle" font-size="11" fill="#3D7EA6" font-weight="600">S8</text>
 
-  <!-- Freccia BEACH -->
-  <polygon points="10,218 55,210 55,226" fill="none" stroke="#5B8C5A" stroke-width="1.5"/>
-  <text x="62" y="222" font-family="Inter" font-size="9" fill="#5B8C5A" font-weight="bold">BEACH</text>
+  <!-- Spiaggia laterale sinistra -->
+  <rect x="8" y="215" width="48" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="32" y="234" text-anchor="middle" font-size="10" fill="#3D7EA6">S4</text>
+  <rect x="38" y="280" width="52" height="28" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="64" y="298" text-anchor="middle" font-size="10" fill="#3D7EA6">S3</text>
+  <rect x="8" y="355" width="48" height="28" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="32" y="373" text-anchor="middle" font-size="10" fill="#3D7EA6">S0</text>
+  <rect x="38" y="420" width="52" height="28" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="64" y="438" text-anchor="middle" font-size="10" fill="#3D7EA6">S2</text>
+  <rect x="8" y="510" width="48" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
+  <text x="32" y="529" text-anchor="middle" font-size="10" fill="#3D7EA6">S1</text>
+
+  <!-- BEACH arrow -->
+  <polygon points="15,190 60,183 60,197" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
+  <text x="66" y="193" font-size="8" fill="#5B8C5A" font-weight="bold">BEACH</text>
 
   <!-- ═══ PRIVÉ (azzurro) ═══ -->
-  <text x="460" y="55" font-family="Inter" font-size="9" fill="#00BCD4"
-        font-weight="bold">PRIVÉ</text>
-  <rect x="410" y="62" width="70" height="35" rx="4" fill="none" stroke="#00BCD4" stroke-width="1.5"/>
-  <text x="445" y="84" text-anchor="middle" font-family="Inter" font-size="9" fill="#00BCD4">privè2</text>
-  <rect x="520" y="62" width="70" height="35" rx="4" fill="none" stroke="#00BCD4" stroke-width="1.5"/>
-  <text x="555" y="84" text-anchor="middle" font-family="Inter" font-size="9" fill="#00BCD4">Privè3</text>
-  <rect x="410" y="110" width="70" height="35" rx="4" fill="none" stroke="#00BCD4" stroke-width="1.5"/>
-  <text x="445" y="132" text-anchor="middle" font-family="Inter" font-size="9" fill="#00BCD4">privè1</text>
-  <rect x="520" y="110" width="70" height="35" rx="4" fill="none" stroke="#00BCD4" stroke-width="1.5"/>
-  <text x="555" y="132" text-anchor="middle" font-family="Inter" font-size="9" fill="#00BCD4">Privè4</text>
+  <rect x="420" y="40" width="72" height="34" rx="3" fill="none" stroke="#00BCD4" stroke-width="1.4"/>
+  <text x="456" y="62" text-anchor="middle" font-size="9" fill="#00BCD4">privè2</text>
+  <rect x="530" y="40" width="72" height="34" rx="3" fill="none" stroke="#00BCD4" stroke-width="1.4"/>
+  <text x="566" y="62" text-anchor="middle" font-size="9" fill="#00BCD4">Privè3</text>
+  <rect x="420" y="90" width="72" height="34" rx="3" fill="none" stroke="#00BCD4" stroke-width="1.4"/>
+  <text x="456" y="112" text-anchor="middle" font-size="9" fill="#00BCD4">privè1</text>
+  <rect x="530" y="90" width="72" height="34" rx="3" fill="none" stroke="#00BCD4" stroke-width="1.4"/>
+  <text x="566" y="112" text-anchor="middle" font-size="9" fill="#00BCD4">Privè4</text>
 
-  <!-- ═══ SALA (arancione, rettangolo grande) ═══ -->
-  <rect x="110" y="220" width="280" height="400" rx="6" fill="none" stroke="#D4883E" stroke-width="2"/>
-  <text x="200" y="215" font-family="Inter" font-size="12" fill="#D4883E"
-        font-weight="bold" letter-spacing="3">SALA</text>
+  <!-- ═══ SALA (arancione — rettangolo grande) ═══ -->
+  <rect x="115" y="195" width="285" height="380" rx="4" fill="none" stroke="#D4883E" stroke-width="2"/>
+  <text x="200" y="188" font-size="12" fill="#D4883E" font-weight="bold" letter-spacing="3">SALA</text>
 
-  <!-- Tavoli SALA (dentro il rettangolo) -->
-  <rect x="135" y="250" width="55" height="45" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="162" y="278" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">4</text>
-  <rect x="215" y="250" width="45" height="40" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="238" y="275" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">5</text>
-  <rect x="305" y="250" width="55" height="45" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="332" y="278" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">14</text>
+  <!-- Tavoli dentro SALA -->
+  <rect x="140" y="220" width="52" height="40" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="166" y="245" text-anchor="middle" font-size="11" fill="#D4883E">4</text>
+  <rect x="220" y="220" width="48" height="38" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="244" y="244" text-anchor="middle" font-size="11" fill="#D4883E">5</text>
+  <rect x="310" y="220" width="60" height="42" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="340" y="246" text-anchor="middle" font-size="11" fill="#D4883E">14</text>
 
-  <rect x="135" y="310" width="55" height="35" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="162" y="332" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">3</text>
-  <rect x="215" y="320" width="45" height="40" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="238" y="345" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">7</text>
+  <rect x="140" y="280" width="52" height="35" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="166" y="302" text-anchor="middle" font-size="11" fill="#D4883E">3</text>
+  <rect x="220" y="285" width="55" height="38" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="248" y="309" text-anchor="middle" font-size="11" fill="#D4883E">7</text>
 
-  <rect x="135" y="370" width="55" height="35" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="162" y="392" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">2</text>
-  <rect x="215" y="375" width="45" height="40" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="238" y="400" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">8</text>
+  <rect x="140" y="340" width="52" height="35" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="166" y="362" text-anchor="middle" font-size="11" fill="#D4883E">2</text>
+  <rect x="220" y="342" width="55" height="38" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="248" y="366" text-anchor="middle" font-size="11" fill="#D4883E">8</text>
 
-  <rect x="135" y="440" width="55" height="40" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="162" y="465" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">1</text>
-  <rect x="215" y="450" width="50" height="35" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="240" y="472" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">10</text>
-  <rect x="305" y="440" width="55" height="45" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="332" y="468" text-anchor="middle" font-family="Inter" font-size="11" fill="#D4883E">11</text>
+  <rect x="140" y="410" width="52" height="38" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="166" y="434" text-anchor="middle" font-size="11" fill="#D4883E">1</text>
+  <rect x="210" y="425" width="55" height="32" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="238" y="446" text-anchor="middle" font-size="10" fill="#D4883E">10</text>
+  <rect x="310" y="410" width="60" height="42" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
+  <text x="340" y="436" text-anchor="middle" font-size="11" fill="#D4883E">11</text>
 
-  <!-- ═══ VERANDA (verde scuro) ═══ -->
-  <text x="440" y="280" font-family="Inter" font-size="11" fill="#5B8C5A"
-        font-weight="bold" letter-spacing="2">VERANDA</text>
-  <rect x="430" y="240" width="60" height="35" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="460" y="262" text-anchor="middle" font-family="Inter" font-size="10" fill="#5B8C5A">V2</text>
-  <rect x="430" y="320" width="60" height="40" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="460" y="345" text-anchor="middle" font-family="Inter" font-size="10" fill="#5B8C5A">15</text>
-  <rect x="400" y="410" width="65" height="35" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="432" y="432" text-anchor="middle" font-family="Inter" font-size="10" fill="#5B8C5A">V1</text>
-  <!-- A1, A2, A3 (cerchi verdi) -->
-  <circle cx="530" y="430" cx="530" cy="430" r="18" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="530" y="434" text-anchor="middle" font-family="Inter" font-size="9" fill="#5B8C5A">A2</text>
-  <circle cx="580" cy="430" r="18" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="580" y="434" text-anchor="middle" font-family="Inter" font-size="9" fill="#5B8C5A">A1</text>
-  <circle cx="80" cy="390" r="18" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="80" y="394" text-anchor="middle" font-family="Inter" font-size="9" fill="#5B8C5A">A3</text>
+  <!-- ═══ VERANDA ═══ -->
+  <text x="480" y="255" font-size="11" fill="#5B8C5A" font-weight="bold" letter-spacing="1">VERANDA</text>
+  <rect x="435" y="210" width="60" height="32" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
+  <text x="465" y="230" text-anchor="middle" font-size="10" fill="#5B8C5A">V2</text>
+  <rect x="435" y="295" width="65" height="38" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
+  <text x="468" y="319" text-anchor="middle" font-size="10" fill="#5B8C5A">15</text>
+  <rect x="410" y="385" width="65" height="32" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
+  <text x="442" y="405" text-anchor="middle" font-size="10" fill="#5B8C5A">V1</text>
+  <!-- A1, A2, A3 -->
+  <circle cx="525" cy="400" r="17" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
+  <text x="525" y="404" text-anchor="middle" font-size="9" fill="#5B8C5A">A2</text>
+  <circle cx="580" cy="400" r="17" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
+  <text x="580" y="404" text-anchor="middle" font-size="9" fill="#5B8C5A">A1</text>
+  <circle cx="85" cy="365" r="16" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
+  <text x="85" y="369" text-anchor="middle" font-size="9" fill="#5B8C5A">A3</text>
 
-  <!-- O1, O2 (cerchi rossi — bar esterno) -->
-  <circle cx="20" cy="465" r="14" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="20" y="469" text-anchor="middle" font-family="Inter" font-size="8" fill="#A63D3D">O1</text>
-  <circle cx="20" cy="305" r="14" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="20" y="309" text-anchor="middle" font-family="Inter" font-size="8" fill="#A63D3D">O2</text>
+  <!-- O1, O2 (cerchi rossi) -->
+  <circle cx="22" cy="465" r="13" fill="none" stroke="#A63D3D" stroke-width="1.3"/>
+  <text x="22" y="469" text-anchor="middle" font-size="8" fill="#A63D3D">O1</text>
+  <circle cx="22" cy="270" r="13" fill="none" stroke="#A63D3D" stroke-width="1.3"/>
+  <text x="22" y="274" text-anchor="middle" font-size="8" fill="#A63D3D">O2</text>
 
   <!-- EXIT -->
-  <text x="540" y="215" font-family="Inter" font-size="9" fill="#C25050"
-        font-weight="bold">EXIT →</text>
+  <text x="550" y="188" font-size="9" fill="#E53935" font-weight="bold">EXIT →</text>
 
-  <!-- ═══ PATIO (giallo/verde) ═══ -->
-  <text x="470" y="485" font-family="Inter" font-size="11" fill="#8BC34A"
-        font-weight="bold" letter-spacing="2">PATIO</text>
-  <!-- Riga 1: P4, P1 -->
-  <rect x="480" y="495" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="505" y="520" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P4</text>
-  <rect x="550" y="495" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="575" y="520" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P1</text>
-  <!-- Riga 2: P9, P7, P5, P2 -->
-  <rect x="340" y="550" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="365" y="575" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P9</text>
-  <rect x="410" y="550" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="435" y="575" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P7</text>
-  <rect x="480" y="550" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="505" y="575" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P5</text>
-  <rect x="550" y="550" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="575" y="575" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P2</text>
-  <!-- Riga 3: P10, P8, P6, P3 -->
-  <rect x="340" y="605" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="365" y="630" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P10</text>
-  <rect x="410" y="605" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="435" y="630" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P8</text>
-  <rect x="480" y="605" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="505" y="630" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P6</text>
-  <rect x="550" y="605" width="50" height="40" rx="4" fill="none" stroke="#8BC34A" stroke-width="1.8"/>
-  <text x="575" y="630" text-anchor="middle" font-family="Inter" font-size="10" fill="#8BC34A">P3</text>
+  <!-- ═══ PATIO ═══ -->
+  <text x="490" y="448" font-size="11" fill="#8BC34A" font-weight="bold" letter-spacing="1">PATIO</text>
+  <rect x="495" y="458" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="518" y="481" text-anchor="middle" font-size="9" fill="#8BC34A">P4</text>
+  <rect x="560" y="458" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="583" y="481" text-anchor="middle" font-size="9" fill="#8BC34A">P1</text>
 
-  <!-- ═══ BAR / TIKI BAR ═══ -->
-  <rect x="90" y="665" width="65" height="22" rx="3" fill="#D4883E" opacity="0.3" stroke="#D4883E" stroke-width="1"/>
-  <text x="122" y="680" text-anchor="middle" font-family="Inter" font-size="8" fill="#D4883E"
-        font-weight="bold">TIKI BAR</text>
-  <rect x="25" y="660" width="40" height="30" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="45" y="679" text-anchor="middle" font-family="Inter" font-size="9" fill="#A63D3D">D4</text>
-  <rect x="168" y="660" width="40" height="30" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="188" y="679" text-anchor="middle" font-family="Inter" font-size="9" fill="#A63D3D">D3</text>
-  <rect x="220" y="660" width="40" height="30" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="240" y="679" text-anchor="middle" font-family="Inter" font-size="9" fill="#A63D3D">D2</text>
-  <rect x="275" y="660" width="40" height="30" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="295" y="679" text-anchor="middle" font-family="Inter" font-size="9" fill="#A63D3D">D1</text>
+  <rect x="360" y="510" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="383" y="533" text-anchor="middle" font-size="9" fill="#8BC34A">P9</text>
+  <rect x="425" y="510" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="448" y="533" text-anchor="middle" font-size="9" fill="#8BC34A">P7</text>
+  <rect x="495" y="510" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="518" y="533" text-anchor="middle" font-size="9" fill="#8BC34A">P5</text>
+  <rect x="560" y="510" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="583" y="533" text-anchor="middle" font-size="9" fill="#8BC34A">P2</text>
 
-  <!-- Legenda colori -->
-  <rect x="10" y="720" width="600" height="1" fill="#333"/>
-  <circle cx="25" cy="740" r="5" fill="#3D7EA6"/>
-  <text x="36" y="743" font-family="Inter" font-size="8" fill="#aaa">Spiaggia</text>
-  <circle cx="105" cy="740" r="5" fill="#00BCD4"/>
-  <text x="116" y="743" font-family="Inter" font-size="8" fill="#aaa">Privé</text>
-  <circle cx="165" cy="740" r="5" fill="#D4883E"/>
-  <text x="176" y="743" font-family="Inter" font-size="8" fill="#aaa">Sala</text>
-  <circle cx="215" cy="740" r="5" fill="#5B8C5A"/>
-  <text x="226" y="743" font-family="Inter" font-size="8" fill="#aaa">Veranda</text>
-  <circle cx="295" cy="740" r="5" fill="#8BC34A"/>
-  <text x="306" y="743" font-family="Inter" font-size="8" fill="#aaa">Patio</text>
-  <circle cx="355" cy="740" r="5" fill="#A63D3D"/>
-  <text x="366" y="743" font-family="Inter" font-size="8" fill="#aaa">Bar</text>
+  <rect x="360" y="562" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="383" y="585" text-anchor="middle" font-size="9" fill="#8BC34A">P10</text>
+  <rect x="425" y="562" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="448" y="585" text-anchor="middle" font-size="9" fill="#8BC34A">P8</text>
+  <rect x="495" y="562" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="518" y="585" text-anchor="middle" font-size="9" fill="#8BC34A">P6</text>
+  <rect x="560" y="562" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
+  <text x="583" y="585" text-anchor="middle" font-size="9" fill="#8BC34A">P3</text>
+
+  <!-- ═══ TIKI BAR ═══ -->
+  <rect x="85" y="620" width="70" height="22" rx="3" fill="#D4883E" fill-opacity="0.3"
+        stroke="#D4883E" stroke-width="1"/>
+  <text x="120" y="635" text-anchor="middle" font-size="8" fill="#D4883E" font-weight="bold">TIKI BAR</text>
+  <rect x="20" y="615" width="42" height="28" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
+  <text x="41" y="633" text-anchor="middle" font-size="9" fill="#A63D3D">D4</text>
+  <rect x="170" y="615" width="42" height="28" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
+  <text x="191" y="633" text-anchor="middle" font-size="9" fill="#A63D3D">D3</text>
+  <rect x="225" y="615" width="42" height="28" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
+  <text x="246" y="633" text-anchor="middle" font-size="9" fill="#A63D3D">D2</text>
+  <rect x="280" y="615" width="42" height="28" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
+  <text x="301" y="633" text-anchor="middle" font-size="9" fill="#A63D3D">D1</text>
 </svg>
 """
 
+
 # ─────────────────────────────────────────────────────────────
-# CSS — Palette sabbia/oro/navy dal logo
+# CSS
 # ─────────────────────────────────────────────────────────────
 def inject_custom_css():
     st.markdown("""
@@ -319,28 +314,12 @@ def inject_custom_css():
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 24px;
-            padding: 1.2rem 2rem;
+            gap: 20px;
+            padding: 1rem 2rem;
             background: var(--bg-card);
             border-radius: 16px;
             border: 1px solid rgba(197, 165, 90, 0.25);
-            margin-bottom: 1.2rem;
-        }
-        .brand-header .brand-text { text-align: left; }
-        .brand-header .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--gold);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-        .brand-header .brand-sub {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-top: 2px;
+            margin-bottom: 1rem;
         }
 
         /* Stats */
@@ -362,7 +341,7 @@ def inject_custom_css():
             margin-top: 2px;
         }
 
-        /* Zone */
+        /* Zone header */
         .zone-header {
             display: inline-flex;
             align-items: center;
@@ -386,38 +365,22 @@ def inject_custom_css():
             border: 1px solid rgba(197, 165, 90, 0.2);
             margin-bottom: 1rem;
         }
-        .login-box .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--gold);
-            letter-spacing: 3px;
-            margin-top: 0.8rem;
-        }
-        .login-box .brand-sub {
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-        }
 
         /* Override Streamlit widgets */
         div[data-testid="stVerticalBlock"] { gap: 0.4rem !important; }
         .stButton > button {
             border-radius: 8px !important;
             font-weight: 600 !important;
-            font-size: 0.8rem !important;
-            min-height: 52px !important;
+            font-size: 0.78rem !important;
+            min-height: 54px !important;
             white-space: pre-wrap !important;
             line-height: 1.3 !important;
         }
 
-        /* Sidebar map */
+        /* Sidebar */
         section[data-testid="stSidebar"] {
-            background: #1A1A1A !important;
-            border-right: 1px solid rgba(197, 165, 90, 0.2);
-        }
-        section[data-testid="stSidebar"] .block-container {
-            padding: 0.5rem !important;
+            background: #141414 !important;
+            border-right: 1px solid rgba(197, 165, 90, 0.15);
         }
     </style>
     """, unsafe_allow_html=True)
@@ -446,8 +409,6 @@ def login_page():
         st.markdown(f"""
         <div class="login-box">
             {LOGO_SVG}
-            <div class="brand-name">PESCE SPADA</div>
-            <div class="brand-sub">Beach Club</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -473,7 +434,6 @@ def logout():
 
 # ─────────────────────────────────────────────────────────────
 # DATABASE — Google Sheets
-# Lettura fresca per scritture, cache solo per display
 # ─────────────────────────────────────────────────────────────
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -524,16 +484,21 @@ def _read_sheet_fresh():
                 df[col] = ""
         df = df[SHEET_COLUMNS]
         df = df[df["ID"].astype(str).str.strip() != ""]
-        df["Data"] = df["Data"].astype(str)
+        # CRITICO: forza TUTTI i valori a stringa per evitare mismatch int/str
+        df["Tavolo"] = df["Tavolo"].astype(str).str.strip()
+        df["Data"] = df["Data"].astype(str).str.strip()
+        df["Fascia_Oraria"] = df["Fascia_Oraria"].astype(str).str.strip()
+        df["Cliente"] = df["Cliente"].astype(str).str.strip()
+        df["ID"] = df["ID"].astype(str).str.strip()
         return df
     except Exception as e:
         st.error(f"Errore lettura foglio: {e}")
         return pd.DataFrame(columns=SHEET_COLUMNS)
 
 
-@st.cache_data(ttl=10)
+@st.cache_data(ttl=5)
 def load_reservations():
-    """Lettura con cache breve (10s) per il display. NON usare per scritture."""
+    """Lettura con cache breve (5s) per il display. NON usare per scritture."""
     return _read_sheet_fresh()
 
 
@@ -544,7 +509,8 @@ def _write_sheet(df):
         ws.clear()
         data_to_write = [SHEET_COLUMNS] + df[SHEET_COLUMNS].values.tolist()
         ws.update(range_name="A1", values=data_to_write)
-        st.cache_data.clear()
+        # Invalida la cache IMMEDIATAMENTE
+        load_reservations.clear()
         return True
     except Exception as e:
         st.error(f"Errore salvataggio: {e}")
@@ -552,23 +518,26 @@ def _write_sheet(df):
 
 
 def add_reservation(table, cliente, data_str, fascia, fonte):
-    # Legge FRESCO per evitare sovrascritture
     df = _read_sheet_fresh()
-    # Controlla duplicati
-    conflict = df[(df["Tavolo"] == table) & (df["Data"] == data_str) & (df["Fascia_Oraria"] == fascia)]
+    # Confronto come stringhe
+    conflict = df[
+        (df["Tavolo"] == str(table)) &
+        (df["Data"] == str(data_str)) &
+        (df["Fascia_Oraria"] == str(fascia))
+    ]
     if not conflict.empty:
-        st.error(f"Tavolo {table} gia' prenotato per {fascia} del {data_str}!")
+        st.error(f"Tavolo {table} già prenotato per {fascia} del {data_str}!")
         return False
 
     new_id = str(uuid.uuid4())[:8].upper()
     now = datetime.now().strftime("%d-%m-%Y %H:%M")
     new_row = pd.DataFrame([{
         "ID": new_id,
-        "Tavolo": table,
-        "Cliente": cliente,
-        "Data": data_str,
-        "Fascia_Oraria": fascia,
-        "Fonte_Prenotazione": fonte,
+        "Tavolo": str(table),
+        "Cliente": str(cliente),
+        "Data": str(data_str),
+        "Fascia_Oraria": str(fascia),
+        "Fonte_Prenotazione": str(fonte),
         "Creato_Da": st.session_state.username,
         "Data_Creazione": now,
         "Ultima_Modifica": now,
@@ -579,31 +548,35 @@ def add_reservation(table, cliente, data_str, fascia, fonte):
 
 def update_reservation(res_id, table, cliente, data_str, fascia, fonte):
     df = _read_sheet_fresh()
-    other = df[df["ID"] != res_id]
-    conflict = other[(other["Tavolo"] == table) & (other["Data"] == data_str) & (other["Fascia_Oraria"] == fascia)]
+    other = df[df["ID"] != str(res_id)]
+    conflict = other[
+        (other["Tavolo"] == str(table)) &
+        (other["Data"] == str(data_str)) &
+        (other["Fascia_Oraria"] == str(fascia))
+    ]
     if not conflict.empty:
-        st.error(f"Tavolo {table} gia' prenotato per {fascia} del {data_str}!")
+        st.error(f"Tavolo {table} già prenotato per {fascia} del {data_str}!")
         return False
 
     now = datetime.now().strftime("%d-%m-%Y %H:%M")
-    mask = df["ID"] == res_id
-    df.loc[mask, "Tavolo"] = table
-    df.loc[mask, "Cliente"] = cliente
-    df.loc[mask, "Data"] = data_str
-    df.loc[mask, "Fascia_Oraria"] = fascia
-    df.loc[mask, "Fonte_Prenotazione"] = fonte
+    mask = df["ID"] == str(res_id)
+    df.loc[mask, "Tavolo"] = str(table)
+    df.loc[mask, "Cliente"] = str(cliente)
+    df.loc[mask, "Data"] = str(data_str)
+    df.loc[mask, "Fascia_Oraria"] = str(fascia)
+    df.loc[mask, "Fonte_Prenotazione"] = str(fonte)
     df.loc[mask, "Ultima_Modifica"] = now
     return _write_sheet(df)
 
 
 def delete_reservation(res_id):
     df = _read_sheet_fresh()
-    df = df[df["ID"] != res_id]
+    df = df[df["ID"] != str(res_id)]
     return _write_sheet(df)
 
 
 def get_reservations_for_date_slot(df, target_date_str, time_slot):
-    mask = (df["Data"] == target_date_str) & (df["Fascia_Oraria"] == time_slot)
+    mask = (df["Data"] == str(target_date_str)) & (df["Fascia_Oraria"] == str(time_slot))
     return df[mask]
 
 
@@ -613,11 +586,7 @@ def get_reservations_for_date_slot(df, target_date_str, time_slot):
 def render_header():
     st.markdown(f"""
     <div class="brand-header">
-        <div>{LOGO_SVG}</div>
-        <div class="brand-text">
-            <div class="brand-name">Pesce Spada</div>
-            <div class="brand-sub">Beach Club &middot; Prenotazioni</div>
-        </div>
+        {LOGO_SMALL_SVG}
     </div>
     """, unsafe_allow_html=True)
 
@@ -651,12 +620,13 @@ def render_stats(filtered_df):
 
 
 # ─────────────────────────────────────────────────────────────
-# MAPPA TAVOLI
+# MAPPA TAVOLI (bottoni interattivi)
 # ─────────────────────────────────────────────────────────────
 def render_table_map(filtered_df):
+    # Costruisce mappa occupazione: chiave = stringa tavolo
     occupied_map = {}
     for _, row in filtered_df.iterrows():
-        occupied_map[row["Tavolo"]] = row["Cliente"]
+        occupied_map[str(row["Tavolo"])] = str(row["Cliente"])
 
     for zone_name, zone_data in ZONES.items():
         color = zone_data["color"]
@@ -678,14 +648,14 @@ def render_table_map(filtered_df):
                 table_idx = row_idx * cols_per_row + col_idx
                 if table_idx >= len(tables):
                     break
-                table_name = tables[table_idx]
+                table_name = tables[table_idx]  # sempre stringa dal dict ZONES
                 guest = occupied_map.get(table_name)
                 is_occupied = guest is not None
 
                 with cols[col_idx]:
                     if is_occupied:
-                        short_name = guest[:14] if len(guest) > 14 else guest
-                        label = f"🔴 {table_name} | {short_name}"
+                        short_name = guest[:12] if len(guest) > 12 else guest
+                        label = f"🔴 {table_name}\n{short_name}"
                     else:
                         label = f"🟢 {table_name}"
 
@@ -695,7 +665,7 @@ def render_table_map(filtered_df):
                         key=f"tbl_{zone_name}_{table_name}",
                         use_container_width=True,
                         type=btn_type,
-                        help=f"{guest}" if is_occupied else f"Tavolo {table_name} libero",
+                        help=f"Prenotato: {guest}" if is_occupied else f"Tavolo {table_name} — libero",
                     ):
                         st.session_state.selected_table = table_name
                         st.session_state.show_modal = True
@@ -710,7 +680,7 @@ def render_crud_panel(filtered_df, selected_date, selected_slot):
     if not table_name:
         return
 
-    table_res = filtered_df[filtered_df["Tavolo"] == table_name]
+    table_res = filtered_df[filtered_df["Tavolo"] == str(table_name)]
     is_occupied = not table_res.empty
 
     # Zona
@@ -761,7 +731,7 @@ def _render_empty(table_name, selected_date, selected_slot):
 
             col_ok, col_no = st.columns(2)
             with col_ok:
-                submitted = st.form_submit_button("Conferma", use_container_width=True, type="primary")
+                submitted = st.form_submit_button("Conferma Prenotazione", use_container_width=True, type="primary")
             with col_no:
                 cancel = st.form_submit_button("Annulla", use_container_width=True)
 
@@ -771,7 +741,7 @@ def _render_empty(table_name, selected_date, selected_slot):
                 else:
                     data_str = data_res.strftime("%d-%m-%Y")
                     if add_reservation(table_name, cliente.strip(), data_str, fascia, fonte):
-                        st.success(f"Prenotato: {cliente} -> {table_name}")
+                        st.success(f"✅ Prenotato: {cliente} → Tavolo {table_name}")
                         st.session_state.show_modal = False
                         st.session_state.selected_table = None
                         st.rerun()
@@ -804,19 +774,19 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
     """, unsafe_allow_html=True)
 
     if is_admin:
-        tab_edit, tab_delete = st.tabs(["Modifica", "Elimina"])
+        tab_edit, tab_delete = st.tabs(["✏️ Modifica", "🗑️ Elimina"])
 
         with tab_edit:
             with st.form("edit_form"):
                 col1, col2 = st.columns(2)
                 with col1:
-                    cliente = st.text_input("Cliente", value=reservation["Cliente"])
+                    cliente = st.text_input("Cliente", value=str(reservation["Cliente"]))
                     fonte_idx = BOOKING_SOURCES.index(reservation["Fonte_Prenotazione"]) \
                         if reservation["Fonte_Prenotazione"] in BOOKING_SOURCES else 0
                     fonte = st.selectbox("Fonte", BOOKING_SOURCES, index=fonte_idx)
                 with col2:
                     try:
-                        cur_date = datetime.strptime(reservation["Data"], "%d-%m-%Y").date()
+                        cur_date = datetime.strptime(str(reservation["Data"]), "%d-%m-%Y").date()
                     except (ValueError, TypeError):
                         cur_date = selected_date
                     data_res = st.date_input("Data", value=cur_date, format="DD/MM/YYYY")
@@ -827,14 +797,14 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
                 tavolo_idx = ALL_TABLES.index(table_name) if table_name in ALL_TABLES else 0
                 nuovo_tavolo = st.selectbox("Sposta a tavolo", ALL_TABLES, index=tavolo_idx)
 
-                if st.form_submit_button("Salva", use_container_width=True, type="primary"):
+                if st.form_submit_button("Salva Modifiche", use_container_width=True, type="primary"):
                     if not cliente.strip():
                         st.error("Nome obbligatorio!")
                     else:
                         data_str = data_res.strftime("%d-%m-%Y")
                         if update_reservation(reservation["ID"], nuovo_tavolo,
                                               cliente.strip(), data_str, fascia, fonte):
-                            st.success("Aggiornato!")
+                            st.success("✅ Aggiornato!")
                             st.session_state.show_modal = False
                             st.session_state.selected_table = None
                             st.rerun()
@@ -843,7 +813,7 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
             st.warning(f"Eliminare **{reservation['Cliente']}** dal tavolo **{table_name}**?")
             col_del, col_cancel = st.columns(2)
             with col_del:
-                if st.button("Elimina", type="primary",
+                if st.button("🗑️ Elimina", type="primary",
                              use_container_width=True, key="btn_del_confirm"):
                     if delete_reservation(reservation["ID"]):
                         st.success("Eliminata!")
@@ -864,30 +834,28 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
 
 
 # ─────────────────────────────────────────────────────────────
-# DASHBOARD
+# SIDEBAR — Mappa planimetria (solo riferimento visivo)
 # ─────────────────────────────────────────────────────────────
 def render_sidebar_map():
-    """Sidebar con mappa della sala come riferimento visivo."""
     with st.sidebar:
         st.markdown(f"""
-        <div style="text-align:center; margin-bottom:8px;">
-            <span style="font-family:'Playfair Display',serif; color:#C5A55A;
-                         font-weight:700; font-size:1rem; letter-spacing:2px;">
-                🗺️ MAPPA SALA
-            </span>
-            <div style="color:#8B8B8B; font-size:0.65rem; margin-top:2px;">
-                Posizione tavoli &mdash; riferimento operatore
+        <div style="text-align:center; margin-bottom:6px;">
+            {LOGO_SMALL_SVG}
+        </div>
+        <div style="text-align:center; margin-bottom:10px;">
+            <span style="color:#C5A55A; font-weight:700; font-size:0.85rem;
+                         letter-spacing:1px;">🗺️ MAPPA SALA</span>
+            <div style="color:#8B8B8B; font-size:0.6rem; margin-top:2px;">
+                Riferimento posizione tavoli
             </div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown(FLOOR_PLAN_SVG, unsafe_allow_html=True)
-        st.markdown("""
-        <div style="color:#8B8B8B; font-size:0.6rem; text-align:center; margin-top:6px;">
-            Mappa non in scala &mdash; orientamento: spiaggia a sinistra
-        </div>
-        """, unsafe_allow_html=True)
 
 
+# ─────────────────────────────────────────────────────────────
+# DASHBOARD
+# ─────────────────────────────────────────────────────────────
 def main_dashboard():
     render_sidebar_map()
     render_header()
@@ -905,8 +873,8 @@ def main_dashboard():
     with col_actions:
         ac1, ac2 = st.columns(2)
         with ac1:
-            if st.button("🔄", use_container_width=True, help="Aggiorna"):
-                st.cache_data.clear()
+            if st.button("🔄", use_container_width=True, help="Aggiorna dati"):
+                load_reservations.clear()
                 st.rerun()
         with ac2:
             if st.button("🚪", use_container_width=True, help="Logout"):
@@ -925,32 +893,14 @@ def main_dashboard():
             render_crud_panel(filtered_df, selected_date, selected_slot)
         st.divider()
 
-    # Mappa
-    st.caption("Clicca un tavolo per gestire la prenotazione")
+    # Mappa tavoli interattiva
+    st.caption("👇 Clicca un tavolo per prenotare o gestire")
     render_table_map(filtered_df)
 
-    # Lista
-    st.divider()
-    with st.expander(f"Prenotazioni — {selected_slot} {selected_date.strftime('%d/%m/%Y')}", expanded=False):
-        if filtered_df.empty:
-            st.info("Nessuna prenotazione.")
-        else:
-            for _, row in filtered_df.iterrows():
-                col_info, col_action = st.columns([5, 1])
-                with col_info:
-                    st.markdown(
-                        f"**{row['Tavolo']}** — {row['Cliente']} "
-                        f"*({row['Fonte_Prenotazione']})* `{row['ID']}`"
-                    )
-                with col_action:
-                    if st.session_state.role == "admin":
-                        if st.button("🗑️", key=f"qdel_{row['ID']}", help="Elimina"):
-                            delete_reservation(row["ID"])
-                            st.rerun()
-
     # DB completo (admin)
+    st.divider()
     if st.session_state.role == "admin":
-        with st.expander("Database completo", expanded=False):
+        with st.expander("📊 Database completo", expanded=False):
             if not df.empty:
                 st.dataframe(df.sort_values("Data", ascending=False),
                              use_container_width=True, hide_index=True)
