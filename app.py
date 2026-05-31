@@ -5,7 +5,8 @@ Layout mappa compatto fedele alla planimetria ufficiale.
 """
 
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
+import gspread
+from google.oauth2.service_account import Credentials
 import pandas as pd
 from datetime import datetime, date
 import uuid
@@ -147,15 +148,52 @@ def logout():
 # ─────────────────────────────────────────────────────────────
 # DATABASE (GOOGLE SHEETS)
 # ─────────────────────────────────────────────────────────────
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+]
+
+def get_gspread_client():
+    """Crea client gspread da st.secrets."""
+    secrets = st.secrets["connections"]["gsheets"]
+    creds_dict = {
+        "type": secrets["type"],
+        "project_id": secrets["project_id"],
+        "private_key_id": secrets["private_key_id"],
+        "private_key": secrets["private_key"],
+        "client_email": secrets["client_email"],
+        "client_id": secrets["client_id"],
+        "auth_uri": secrets["auth_uri"],
+        "token_uri": secrets["token_uri"],
+        "auth_provider_x509_cert_url": secrets["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": secrets["client_x509_cert_url"],
+    }
+    creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+    return gspread.authorize(creds)
+
+
+def get_worksheet():
+    """Apre il foglio Prenotazioni."""
+    client = get_gspread_client()
+    spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
+    sh = client.open_by_url(spreadsheet_url)
+    return sh.worksheet("Prenotazioni")
+
+
 @st.cache_data(ttl=30)
 def load_reservations():
     try:
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        df = conn.read(worksheet="Prenotazioni", usecols=list(range(len(SHEET_COLUMNS))))
-        if df is None or df.empty:
+        ws = get_worksheet()
+        data = ws.get_all_records()
+        if not data:
             return pd.DataFrame(columns=SHEET_COLUMNS)
-        df.columns = SHEET_COLUMNS[:len(df.columns)]
-        df = df.dropna(subset=["ID"])
+        df = pd.DataFrame(data)
+        # Assicura che le colonne corrispondano
+        for col in SHEET_COLUMNS:
+            if col not in df.columns:
+                df[col] = ""
+        df = df[SHEET_COLUMNS]
+        df = df[df["ID"].astype(str).str.strip() != ""]
         df["Data"] = df["Data"].astype(str)
         return df
     except Exception as e:
@@ -165,8 +203,11 @@ def load_reservations():
 
 def save_reservations(df):
     try:
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        conn.update(worksheet="Prenotazioni", data=df)
+        ws = get_worksheet()
+        ws.clear()
+        # Scrivi header + dati
+        data_to_write = [SHEET_COLUMNS] + df[SHEET_COLUMNS].values.tolist()
+        ws.update(range_name="A1", values=data_to_write)
         st.cache_data.clear()
         return True
     except Exception as e:
