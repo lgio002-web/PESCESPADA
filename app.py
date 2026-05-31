@@ -10,6 +10,7 @@ from google.oauth2.service_account import Credentials
 import pandas as pd
 from datetime import datetime, date
 import uuid
+import time
 
 # ─────────────────────────────────────────────────────────────
 # CONFIGURAZIONE PAGINA
@@ -18,7 +19,7 @@ st.set_page_config(
     page_title="Pesce Spada Beach Club",
     page_icon="⚔️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 # ─────────────────────────────────────────────────────────────
@@ -134,141 +135,166 @@ LOGO_SMALL_SVG = """
 # Solo per consultazione rapida, senza legenda
 # ─────────────────────────────────────────────────────────────
 FLOOR_PLAN_SVG = """
-<svg viewBox="0 0 640 760" xmlns="http://www.w3.org/2000/svg"
-     style="width:100%; height:auto; background:#111; border-radius:10px; padding:6px;">
+<svg viewBox="0 0 460 640" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%; height:auto; background:#fafafa; border-radius:8px; border:1px solid #ddd;">
 
   <!-- Titolo -->
-  <text x="320" y="22" text-anchor="middle" font-family="Inter,sans-serif" font-size="10"
-        fill="#C5A55A" font-weight="bold" letter-spacing="2">LAYOUT SUMMER 2026</text>
+  <text x="230" y="18" text-anchor="middle" font-family="Arial,sans-serif" font-size="9"
+        fill="#E53935" font-weight="bold" letter-spacing="1">PRANZO</text>
+  <text x="230" y="30" text-anchor="middle" font-family="Arial,sans-serif" font-size="7"
+        fill="#333" letter-spacing="1">LAY OUT SUMMER 2026</text>
 
-  <!-- ═══ SPIAGGIA (blu) ═══ -->
-  <rect x="65" y="40" width="75" height="42" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="102" y="66" text-anchor="middle" font-size="11" fill="#3D7EA6" font-weight="600">S6</text>
-  <rect x="210" y="40" width="85" height="48" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="252" y="70" text-anchor="middle" font-size="11" fill="#3D7EA6" font-weight="600">S7</text>
+  <!-- ═══ SPIAGGIA — top (blu) ═══ -->
+  <rect x="40" y="42" width="55" height="35" rx="2" fill="none" stroke="#2962FF" stroke-width="1.3"/>
+  <text x="67" y="64" text-anchor="middle" font-size="9" fill="#2962FF" font-weight="700">S6</text>
+  <rect x="130" y="42" width="65" height="38" rx="2" fill="none" stroke="#2962FF" stroke-width="1.3"/>
+  <text x="162" y="66" text-anchor="middle" font-size="9" fill="#2962FF" font-weight="700">S7</text>
 
-  <rect x="65" y="98" width="80" height="42" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="105" y="124" text-anchor="middle" font-size="11" fill="#3D7EA6" font-weight="600">S5</text>
-  <rect x="210" y="98" width="85" height="48" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="252" y="128" text-anchor="middle" font-size="11" fill="#3D7EA6" font-weight="600">S8</text>
+  <rect x="40" y="86" width="55" height="35" rx="2" fill="none" stroke="#2962FF" stroke-width="1.3"/>
+  <text x="67" y="108" text-anchor="middle" font-size="9" fill="#2962FF" font-weight="700">S5</text>
+  <rect x="130" y="86" width="65" height="38" rx="2" fill="none" stroke="#2962FF" stroke-width="1.3"/>
+  <text x="162" y="110" text-anchor="middle" font-size="9" fill="#2962FF" font-weight="700">S8</text>
 
-  <!-- Spiaggia laterale sinistra -->
-  <rect x="8" y="215" width="48" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="32" y="234" text-anchor="middle" font-size="10" fill="#3D7EA6">S4</text>
-  <rect x="38" y="280" width="52" height="28" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="64" y="298" text-anchor="middle" font-size="10" fill="#3D7EA6">S3</text>
-  <rect x="8" y="355" width="48" height="28" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="32" y="373" text-anchor="middle" font-size="10" fill="#3D7EA6">S0</text>
-  <rect x="38" y="420" width="52" height="28" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="64" y="438" text-anchor="middle" font-size="10" fill="#3D7EA6">S2</text>
-  <rect x="8" y="510" width="48" height="30" rx="3" fill="none" stroke="#3D7EA6" stroke-width="1.4"/>
-  <text x="32" y="529" text-anchor="middle" font-size="10" fill="#3D7EA6">S1</text>
+  <!-- ═══ PRIVÉ — top right (azzurro) ═══ -->
+  <rect x="300" y="42" width="55" height="28" rx="2" fill="none" stroke="#00BCD4" stroke-width="1.3"/>
+  <text x="327" y="60" text-anchor="middle" font-size="7" fill="#00BCD4" font-weight="600">privè2</text>
+  <rect x="380" y="42" width="55" height="28" rx="2" fill="none" stroke="#00BCD4" stroke-width="1.3"/>
+  <text x="407" y="60" text-anchor="middle" font-size="7" fill="#00BCD4" font-weight="600">Privè3</text>
+  <rect x="300" y="80" width="55" height="28" rx="2" fill="none" stroke="#00BCD4" stroke-width="1.3"/>
+  <text x="327" y="98" text-anchor="middle" font-size="7" fill="#00BCD4" font-weight="600">privè1</text>
+  <rect x="380" y="80" width="55" height="28" rx="2" fill="none" stroke="#00BCD4" stroke-width="1.3"/>
+  <text x="407" y="98" text-anchor="middle" font-size="7" fill="#00BCD4" font-weight="600">Privè4</text>
 
   <!-- BEACH arrow -->
-  <polygon points="15,190 60,183 60,197" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="66" y="193" font-size="8" fill="#5B8C5A" font-weight="bold">BEACH</text>
+  <polygon points="10,148 40,142 40,154" fill="none" stroke="#4CAF50" stroke-width="1"/>
+  <text x="44" y="151" font-size="7" fill="#4CAF50" font-weight="bold">BEACH</text>
 
-  <!-- ═══ PRIVÉ (azzurro) ═══ -->
-  <rect x="420" y="40" width="72" height="34" rx="3" fill="none" stroke="#00BCD4" stroke-width="1.4"/>
-  <text x="456" y="62" text-anchor="middle" font-size="9" fill="#00BCD4">privè2</text>
-  <rect x="530" y="40" width="72" height="34" rx="3" fill="none" stroke="#00BCD4" stroke-width="1.4"/>
-  <text x="566" y="62" text-anchor="middle" font-size="9" fill="#00BCD4">Privè3</text>
-  <rect x="420" y="90" width="72" height="34" rx="3" fill="none" stroke="#00BCD4" stroke-width="1.4"/>
-  <text x="456" y="112" text-anchor="middle" font-size="9" fill="#00BCD4">privè1</text>
-  <rect x="530" y="90" width="72" height="34" rx="3" fill="none" stroke="#00BCD4" stroke-width="1.4"/>
-  <text x="566" y="112" text-anchor="middle" font-size="9" fill="#00BCD4">Privè4</text>
+  <!-- EXIT arrow -->
+  <text x="405" y="148" font-size="7" fill="#E53935" font-weight="bold">EXIT</text>
+  <polygon points="435,148 450,142 450,154" fill="none" stroke="#E53935" stroke-width="1"/>
 
-  <!-- ═══ SALA (arancione — rettangolo grande) ═══ -->
-  <rect x="115" y="195" width="285" height="380" rx="4" fill="none" stroke="#D4883E" stroke-width="2"/>
-  <text x="200" y="188" font-size="12" fill="#D4883E" font-weight="bold" letter-spacing="3">SALA</text>
+  <!-- ═══ SPIAGGIA laterale sinistra ═══ -->
+  <rect x="6" y="172" width="36" height="24" rx="2" fill="none" stroke="#2962FF" stroke-width="1.2"/>
+  <text x="24" y="188" text-anchor="middle" font-size="8" fill="#2962FF" font-weight="600">S4</text>
 
-  <!-- Tavoli dentro SALA -->
-  <rect x="140" y="220" width="52" height="40" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="166" y="245" text-anchor="middle" font-size="11" fill="#D4883E">4</text>
-  <rect x="220" y="220" width="48" height="38" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="244" y="244" text-anchor="middle" font-size="11" fill="#D4883E">5</text>
-  <rect x="310" y="220" width="60" height="42" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="340" y="246" text-anchor="middle" font-size="11" fill="#D4883E">14</text>
+  <!-- O2 -->
+  <circle cx="18" cy="218" r="11" fill="none" stroke="#C62828" stroke-width="1.2"/>
+  <text x="18" y="222" text-anchor="middle" font-size="7" fill="#C62828" font-weight="600">O2</text>
 
-  <rect x="140" y="280" width="52" height="35" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="166" y="302" text-anchor="middle" font-size="11" fill="#D4883E">3</text>
-  <rect x="220" y="285" width="55" height="38" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="248" y="309" text-anchor="middle" font-size="11" fill="#D4883E">7</text>
+  <rect x="18" y="238" width="36" height="22" rx="2" fill="none" stroke="#2962FF" stroke-width="1.2"/>
+  <text x="36" y="253" text-anchor="middle" font-size="8" fill="#2962FF" font-weight="600">S3</text>
 
-  <rect x="140" y="340" width="52" height="35" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="166" y="362" text-anchor="middle" font-size="11" fill="#D4883E">2</text>
-  <rect x="220" y="342" width="55" height="38" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="248" y="366" text-anchor="middle" font-size="11" fill="#D4883E">8</text>
+  <rect x="6" y="275" width="32" height="22" rx="2" fill="none" stroke="#2962FF" stroke-width="1.2"/>
+  <text x="22" y="290" text-anchor="middle" font-size="8" fill="#2962FF" font-weight="600">S0</text>
+  <!-- A3 -->
+  <circle cx="55" cy="286" r="10" fill="none" stroke="#4CAF50" stroke-width="1"/>
+  <text x="55" y="290" text-anchor="middle" font-size="7" fill="#4CAF50">A3</text>
 
-  <rect x="140" y="410" width="52" height="38" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="166" y="434" text-anchor="middle" font-size="11" fill="#D4883E">1</text>
-  <rect x="210" y="425" width="55" height="32" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="238" y="446" text-anchor="middle" font-size="10" fill="#D4883E">10</text>
-  <rect x="310" y="410" width="60" height="42" rx="3" fill="none" stroke="#D4883E" stroke-width="1.2"/>
-  <text x="340" y="436" text-anchor="middle" font-size="11" fill="#D4883E">11</text>
+  <!-- O1 -->
+  <circle cx="18" cy="340" r="11" fill="none" stroke="#C62828" stroke-width="1.2"/>
+  <text x="18" y="344" text-anchor="middle" font-size="7" fill="#C62828" font-weight="600">O1</text>
 
-  <!-- ═══ VERANDA ═══ -->
-  <text x="480" y="255" font-size="11" fill="#5B8C5A" font-weight="bold" letter-spacing="1">VERANDA</text>
-  <rect x="435" y="210" width="60" height="32" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="465" y="230" text-anchor="middle" font-size="10" fill="#5B8C5A">V2</text>
-  <rect x="435" y="295" width="65" height="38" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="468" y="319" text-anchor="middle" font-size="10" fill="#5B8C5A">15</text>
-  <rect x="410" y="385" width="65" height="32" rx="3" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="442" y="405" text-anchor="middle" font-size="10" fill="#5B8C5A">V1</text>
-  <!-- A1, A2, A3 -->
-  <circle cx="525" cy="400" r="17" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="525" y="404" text-anchor="middle" font-size="9" fill="#5B8C5A">A2</text>
-  <circle cx="580" cy="400" r="17" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="580" y="404" text-anchor="middle" font-size="9" fill="#5B8C5A">A1</text>
-  <circle cx="85" cy="365" r="16" fill="none" stroke="#5B8C5A" stroke-width="1.2"/>
-  <text x="85" y="369" text-anchor="middle" font-size="9" fill="#5B8C5A">A3</text>
+  <rect x="18" y="360" width="36" height="22" rx="2" fill="none" stroke="#2962FF" stroke-width="1.2"/>
+  <text x="36" y="375" text-anchor="middle" font-size="8" fill="#2962FF" font-weight="600">S2</text>
 
-  <!-- O1, O2 (cerchi rossi) -->
-  <circle cx="22" cy="465" r="13" fill="none" stroke="#A63D3D" stroke-width="1.3"/>
-  <text x="22" y="469" text-anchor="middle" font-size="8" fill="#A63D3D">O1</text>
-  <circle cx="22" cy="270" r="13" fill="none" stroke="#A63D3D" stroke-width="1.3"/>
-  <text x="22" y="274" text-anchor="middle" font-size="8" fill="#A63D3D">O2</text>
+  <rect x="6" y="420" width="36" height="24" rx="2" fill="none" stroke="#2962FF" stroke-width="1.2"/>
+  <text x="24" y="436" text-anchor="middle" font-size="8" fill="#2962FF" font-weight="600">S1</text>
 
-  <!-- EXIT -->
-  <text x="550" y="188" font-size="9" fill="#E53935" font-weight="bold">EXIT →</text>
+  <!-- ═══ SALA — centro (arancione) ═══ -->
+  <rect x="80" y="160" width="200" height="310" rx="3" fill="none" stroke="#E65100" stroke-width="1.8"/>
+  <rect x="110" y="150" width="42" height="16" rx="2" fill="#E65100"/>
+  <text x="131" y="162" text-anchor="middle" font-size="8" fill="white" font-weight="bold">SALA</text>
 
-  <!-- ═══ PATIO ═══ -->
-  <text x="490" y="448" font-size="11" fill="#8BC34A" font-weight="bold" letter-spacing="1">PATIO</text>
-  <rect x="495" y="458" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="518" y="481" text-anchor="middle" font-size="9" fill="#8BC34A">P4</text>
-  <rect x="560" y="458" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="583" y="481" text-anchor="middle" font-size="9" fill="#8BC34A">P1</text>
+  <!-- Riga 1: 4, 5, 14 -->
+  <rect x="96" y="176" width="38" height="28" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="115" y="194" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">4</text>
+  <rect x="150" y="176" width="38" height="28" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="169" y="194" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">5</text>
+  <rect x="218" y="176" width="46" height="32" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="241" y="196" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">14</text>
 
-  <rect x="360" y="510" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="383" y="533" text-anchor="middle" font-size="9" fill="#8BC34A">P9</text>
-  <rect x="425" y="510" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="448" y="533" text-anchor="middle" font-size="9" fill="#8BC34A">P7</text>
-  <rect x="495" y="510" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="518" y="533" text-anchor="middle" font-size="9" fill="#8BC34A">P5</text>
-  <rect x="560" y="510" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="583" y="533" text-anchor="middle" font-size="9" fill="#8BC34A">P2</text>
+  <!-- Riga 2: 3, 7 -->
+  <rect x="96" y="220" width="38" height="28" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="115" y="238" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">3</text>
+  <rect x="150" y="220" width="45" height="28" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="172" y="238" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">7</text>
 
-  <rect x="360" y="562" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="383" y="585" text-anchor="middle" font-size="9" fill="#8BC34A">P10</text>
-  <rect x="425" y="562" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="448" y="585" text-anchor="middle" font-size="9" fill="#8BC34A">P8</text>
-  <rect x="495" y="562" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="518" y="585" text-anchor="middle" font-size="9" fill="#8BC34A">P6</text>
-  <rect x="560" y="562" width="46" height="36" rx="3" fill="none" stroke="#8BC34A" stroke-width="1.6"/>
-  <text x="583" y="585" text-anchor="middle" font-size="9" fill="#8BC34A">P3</text>
+  <!-- Riga 3: 2, 8 -->
+  <rect x="96" y="262" width="38" height="28" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="115" y="280" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">2</text>
+  <rect x="150" y="262" width="45" height="28" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="172" y="280" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">8</text>
 
-  <!-- ═══ TIKI BAR ═══ -->
-  <rect x="85" y="620" width="70" height="22" rx="3" fill="#D4883E" fill-opacity="0.3"
-        stroke="#D4883E" stroke-width="1"/>
-  <text x="120" y="635" text-anchor="middle" font-size="8" fill="#D4883E" font-weight="bold">TIKI BAR</text>
-  <rect x="20" y="615" width="42" height="28" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="41" y="633" text-anchor="middle" font-size="9" fill="#A63D3D">D4</text>
-  <rect x="170" y="615" width="42" height="28" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="191" y="633" text-anchor="middle" font-size="9" fill="#A63D3D">D3</text>
-  <rect x="225" y="615" width="42" height="28" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="246" y="633" text-anchor="middle" font-size="9" fill="#A63D3D">D2</text>
-  <rect x="280" y="615" width="42" height="28" rx="3" fill="none" stroke="#A63D3D" stroke-width="1.2"/>
-  <text x="301" y="633" text-anchor="middle" font-size="9" fill="#A63D3D">D1</text>
+  <!-- Riga 4: 1, 10, 11 -->
+  <rect x="96" y="320" width="38" height="28" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="115" y="338" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">1</text>
+  <rect x="140" y="335" width="38" height="24" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="159" y="351" text-anchor="middle" font-size="8" fill="#E65100" font-weight="600">10</text>
+  <rect x="218" y="320" width="46" height="32" rx="2" fill="none" stroke="#E65100" stroke-width="1"/>
+  <text x="241" y="340" text-anchor="middle" font-size="9" fill="#E65100" font-weight="600">11</text>
+
+  <!-- ═══ VERANDA — destra (blu scuro) ═══ -->
+  <rect x="290" y="160" width="130" height="250" rx="3" fill="none" stroke="#1565C0" stroke-width="1.5"/>
+  <rect x="330" y="218" width="60" height="16" rx="2" fill="#FFEB3B"/>
+  <text x="360" y="230" text-anchor="middle" font-size="7" fill="#333" font-weight="bold">VERANDA</text>
+
+  <rect x="302" y="172" width="42" height="24" rx="2" fill="none" stroke="#1565C0" stroke-width="1"/>
+  <text x="323" y="188" text-anchor="middle" font-size="8" fill="#1565C0" font-weight="600">V2</text>
+
+  <rect x="302" y="250" width="42" height="28" rx="2" fill="none" stroke="#1565C0" stroke-width="1"/>
+  <text x="323" y="268" text-anchor="middle" font-size="8" fill="#1565C0" font-weight="600">15</text>
+
+  <rect x="290" y="325" width="50" height="24" rx="2" fill="none" stroke="#1565C0" stroke-width="1"/>
+  <text x="315" y="341" text-anchor="middle" font-size="8" fill="#1565C0" font-weight="600">V1</text>
+
+  <!-- A1, A2 -->
+  <circle cx="370" cy="370" r="12" fill="none" stroke="#4CAF50" stroke-width="1"/>
+  <text x="370" y="374" text-anchor="middle" font-size="7" fill="#4CAF50">A2</text>
+  <circle cx="410" cy="370" r="12" fill="none" stroke="#4CAF50" stroke-width="1"/>
+  <text x="410" y="374" text-anchor="middle" font-size="7" fill="#4CAF50">A1</text>
+
+  <!-- ═══ PATIO — basso destra (verde) ═══ -->
+  <rect x="330" y="418" width="45" height="14" rx="2" fill="#CDDC39"/>
+  <text x="352" y="429" text-anchor="middle" font-size="7" fill="#333" font-weight="bold">PATIO</text>
+
+  <!-- Riga 1: P4, P1 -->
+  <rect x="350" y="438" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="367" y="456" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P4</text>
+  <rect x="400" y="438" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="417" y="456" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P1</text>
+
+  <!-- Riga 2: P9, P7, P5, P2 -->
+  <rect x="280" y="476" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="297" y="494" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P9</text>
+  <rect x="320" y="476" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="337" y="494" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P7</text>
+  <rect x="360" y="476" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="377" y="494" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P5</text>
+  <rect x="400" y="476" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="417" y="494" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P2</text>
+
+  <!-- Riga 3: P10, P8, P6, P3 -->
+  <rect x="280" y="514" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="297" y="532" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P10</text>
+  <rect x="320" y="514" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="337" y="532" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P8</text>
+  <rect x="360" y="514" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="377" y="532" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P6</text>
+  <rect x="400" y="514" width="34" height="28" rx="3" fill="none" stroke="#689F38" stroke-width="1.6"/>
+  <text x="417" y="532" text-anchor="middle" font-size="7" fill="#689F38" font-weight="700">P3</text>
+
+  <!-- ═══ TIKI BAR — fondo (arancio) ═══ -->
+  <rect x="55" y="560" width="55" height="18" rx="2" fill="#FF8F00" fill-opacity="0.8"/>
+  <text x="82" y="572" text-anchor="middle" font-size="7" fill="white" font-weight="bold">TIKI BAR</text>
+
+  <rect x="6" y="556" width="34" height="24" rx="2" fill="none" stroke="#E65100" stroke-width="1.2"/>
+  <text x="23" y="572" text-anchor="middle" font-size="8" fill="#E65100" font-weight="600">D4</text>
+  <rect x="120" y="556" width="34" height="24" rx="2" fill="none" stroke="#E65100" stroke-width="1.2"/>
+  <text x="137" y="572" text-anchor="middle" font-size="8" fill="#E65100" font-weight="600">D3</text>
+  <rect x="160" y="556" width="34" height="24" rx="2" fill="none" stroke="#E65100" stroke-width="1.2"/>
+  <text x="177" y="572" text-anchor="middle" font-size="8" fill="#E65100" font-weight="600">D2</text>
+  <rect x="200" y="556" width="34" height="24" rx="2" fill="none" stroke="#E65100" stroke-width="1.2"/>
+  <text x="217" y="572" text-anchor="middle" font-size="8" fill="#E65100" font-weight="600">D1</text>
 </svg>
 """
 
@@ -509,6 +535,8 @@ def _write_sheet(df):
         ws.clear()
         data_to_write = [SHEET_COLUMNS] + df[SHEET_COLUMNS].values.tolist()
         ws.update(range_name="A1", values=data_to_write)
+        # Attende propagazione Google Sheets
+        time.sleep(1)
         # Invalida la cache IMMEDIATAMENTE
         load_reservations.clear()
         return True
@@ -742,6 +770,7 @@ def _render_empty(table_name, selected_date, selected_slot):
                     data_str = data_res.strftime("%d-%m-%Y")
                     if add_reservation(table_name, cliente.strip(), data_str, fascia, fonte):
                         st.success(f"✅ Prenotato: {cliente} → Tavolo {table_name}")
+                        load_reservations.clear()
                         st.session_state.show_modal = False
                         st.session_state.selected_table = None
                         st.rerun()
@@ -805,6 +834,7 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
                         if update_reservation(reservation["ID"], nuovo_tavolo,
                                               cliente.strip(), data_str, fascia, fonte):
                             st.success("✅ Aggiornato!")
+                            load_reservations.clear()
                             st.session_state.show_modal = False
                             st.session_state.selected_table = None
                             st.rerun()
@@ -817,6 +847,7 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
                              use_container_width=True, key="btn_del_confirm"):
                     if delete_reservation(reservation["ID"]):
                         st.success("Eliminata!")
+                        load_reservations.clear()
                         st.session_state.show_modal = False
                         st.session_state.selected_table = None
                         st.rerun()
@@ -835,18 +866,16 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
 
 # ─────────────────────────────────────────────────────────────
 # SIDEBAR — Mappa planimetria (solo riferimento visivo)
+# Sidebar inizia chiusa, si apre con il bottone 🗺️
 # ─────────────────────────────────────────────────────────────
 def render_sidebar_map():
     with st.sidebar:
-        st.markdown(f"""
-        <div style="text-align:center; margin-bottom:6px;">
-            {LOGO_SMALL_SVG}
-        </div>
-        <div style="text-align:center; margin-bottom:10px;">
-            <span style="color:#C5A55A; font-weight:700; font-size:0.85rem;
+        st.markdown("""
+        <div style="text-align:center; margin-bottom:12px; padding-top:8px;">
+            <span style="color:#C5A55A; font-weight:700; font-size:0.95rem;
                          letter-spacing:1px;">🗺️ MAPPA SALA</span>
-            <div style="color:#8B8B8B; font-size:0.6rem; margin-top:2px;">
-                Riferimento posizione tavoli
+            <div style="color:#8B8B8B; font-size:0.65rem; margin-top:3px;">
+                Posizione tavoli · Summer 2026
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -871,12 +900,16 @@ def main_dashboard():
     with col_slot:
         selected_slot = st.selectbox("Fascia", TIME_SLOTS, key="filter_slot")
     with col_actions:
-        ac1, ac2 = st.columns(2)
+        ac1, ac2, ac3 = st.columns(3)
         with ac1:
+            if st.button("🗺️", use_container_width=True, help="Apri mappa sala"):
+                st.session_state.sidebar_open = True
+                st.rerun()
+        with ac2:
             if st.button("🔄", use_container_width=True, help="Aggiorna dati"):
                 load_reservations.clear()
                 st.rerun()
-        with ac2:
+        with ac3:
             if st.button("🚪", use_container_width=True, help="Logout"):
                 logout()
 
