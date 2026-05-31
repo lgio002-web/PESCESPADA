@@ -1,46 +1,34 @@
 LOGO_SVG = """
-<svg viewBox="0 0 430 140" xmlns="http://www.w3.org/2000/svg" width="340" height="110">
-  <rect width="430" height="140" fill="#F8F5EE" rx="8"/>
-  <defs>
-    <linearGradient id="fishBlue" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0A3C66"/>
-      <stop offset="55%" stop-color="#2E79A3"/>
-      <stop offset="100%" stop-color="#9CC8E1"/>
-    </linearGradient>
-  </defs>
-  <g transform="translate(20,18)">
-    <path d="M63 54 C41 29 33 16 36 6 C57 20 78 31 105 36 C114 25 127 18 140 12
-             C132 24 122 34 112 41 C126 43 137 46 145 50 C133 53 121 55 112 55
-             C111 73 105 87 90 102 C89 89 85 78 77 70 C70 77 64 84 56 90 C59 79 61 68 63 54 Z"
-          fill="url(#fishBlue)" stroke="#14334D" stroke-width="2"/>
-    <path d="M42 90 C50 92 58 97 66 104" fill="none" stroke="#7EB7D8" stroke-width="3" stroke-linecap="round"/>
-    <path d="M26 97 C39 99 53 107 63 117" fill="none" stroke="#A7D3E8" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="75" cy="45" r="3" fill="#0B2238"/>
+<svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg" width="320" height="168">
+  <rect width="420" height="220" fill="#FBF8F2" rx="10"/>
+  <g transform="translate(34,22)">
+    <path d="M61 27 C46 10 31 6 19 10 C29 19 34 31 35 46 C28 56 24 68 24 80 C32 74 39 68 46 61 C49 72 52 86 52 103 C64 89 72 71 75 51 C92 49 109 46 123 41 C110 34 97 31 84 29 C93 22 101 14 108 6 C95 11 83 18 74 28 C72 28 67 28 61 27 Z"
+          fill="none" stroke="#B08E67" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M19 10 C27 4 37 4 48 6" fill="none" stroke="#B08E67" stroke-width="4.2" stroke-linecap="round"/>
+    <path d="M74 28 L121 2" fill="none" stroke="#B08E67" stroke-width="4.2" stroke-linecap="round"/>
   </g>
-  <text x="170" y="58" font-family="Georgia, serif" font-size="34" font-weight="bold" fill="#12284A">LIDO IL PESCESPADA</text>
-  <text x="210" y="94" font-family="Georgia, serif" font-size="28" fill="#111">SCALEA (CS)</text>
+  <text x="162" y="88" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" fill="#2F3940">PESCE</text>
+  <text x="162" y="136" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" fill="#2F3940">SPADA</text>
+  <line x1="162" y1="150" x2="326" y2="150" stroke="#2F3940" stroke-width="4"/>
+  <text x="162" y="186" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#C8A37A">BEACH CLUB</text>
+  <line x1="36" y1="206" x2="388" y2="206" stroke="#59636B" stroke-width="2"/>
 </svg>
 """
 
 LOGO_SMALL_SVG = """
-<svg viewBox="0 0 420 110" xmlns="http://www.w3.org/2000/svg" width="320" height="84">
-  <rect width="420" height="110" fill="#F8F5EE" rx="8"/>
-  <defs>
-    <linearGradient id="fishBlueSmall" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0A3C66"/>
-      <stop offset="55%" stop-color="#2E79A3"/>
-      <stop offset="100%" stop-color="#9CC8E1"/>
-    </linearGradient>
-  </defs>
-  <g transform="translate(12,12)">
-    <path d="M46 42 C31 25 26 14 28 6 C44 16 59 24 78 28 C84 21 93 16 102 12
-             C96 20 89 28 82 33 C93 34 101 37 107 40 C98 43 89 44 82 44
-             C81 57 76 67 65 78 C64 68 61 60 55 54 C50 59 45 65 39 70 C41 62 44 53 46 42 Z"
-          fill="url(#fishBlueSmall)" stroke="#14334D" stroke-width="1.6"/>
-    <path d="M30 70 C37 72 43 76 49 82" fill="none" stroke="#A7D3E8" stroke-width="2.2" stroke-linecap="round"/>
+<svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg" width="250" height="132">
+  <rect width="420" height="220" fill="#FBF8F2" rx="10"/>
+  <g transform="translate(34,22)">
+    <path d="M61 27 C46 10 31 6 19 10 C29 19 34 31 35 46 C28 56 24 68 24 80 C32 74 39 68 46 61 C49 72 52 86 52 103 C64 89 72 71 75 51 C92 49 109 46 123 41 C110 34 97 31 84 29 C93 22 101 14 108 6 C95 11 83 18 74 28 C72 28 67 28 61 27 Z"
+          fill="none" stroke="#B08E67" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M19 10 C27 4 37 4 48 6" fill="none" stroke="#B08E67" stroke-width="4.2" stroke-linecap="round"/>
+    <path d="M74 28 L121 2" fill="none" stroke="#B08E67" stroke-width="4.2" stroke-linecap="round"/>
   </g>
-  <text x="135" y="48" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="#12284A">LIDO IL PESCESPADA</text>
-  <text x="170" y="78" font-family="Georgia, serif" font-size="18" fill="#111">SCALEA (CS)</text>
+  <text x="162" y="88" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" fill="#2F3940">PESCE</text>
+  <text x="162" y="136" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" fill="#2F3940">SPADA</text>
+  <line x1="162" y1="150" x2="326" y2="150" stroke="#2F3940" stroke-width="4"/>
+  <text x="162" y="186" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#C8A37A">BEACH CLUB</text>
+  <line x1="36" y1="206" x2="388" y2="206" stroke="#59636B" stroke-width="2"/>
 </svg>
 """
 

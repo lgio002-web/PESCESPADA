@@ -310,6 +310,9 @@ FLOOR_PLAN_SVG = ASSET_FLOOR_PLAN_SVG
 # CSS
 # ─────────────────────────────────────────────────────────────
 def inject_custom_css():
+    sidebar_visible = st.session_state.get("sidebar_visible", False)
+    sidebar_transform = "translateX(0)" if sidebar_visible else "translateX(-100%)"
+    sidebar_opacity = "1" if sidebar_visible else "0"
     st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -414,11 +417,18 @@ def inject_custom_css():
         section[data-testid="stSidebar"] {
             background: #141414 !important;
             border-right: 1px solid rgba(197, 165, 90, 0.15);
-            min-width: 540px !important;
-            max-width: 540px !important;
+            min-width: 560px !important;
+            max-width: 560px !important;
+            transform: SIDEBAR_TRANSFORM !important;
+            opacity: SIDEBAR_OPACITY !important;
+            transition: transform 0.18s ease, opacity 0.18s ease !important;
         }
         section[data-testid="stSidebar"] .block-container {
             padding: 0.8rem 0.8rem 1rem 0.8rem !important;
+        }
+        button[kind="header"] {
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
 
         .table-name {
@@ -432,7 +442,7 @@ def inject_custom_css():
             line-height: 1.15;
         }
     </style>
-    """, unsafe_allow_html=True)
+    """.replace("SIDEBAR_TRANSFORM", sidebar_transform).replace("SIDEBAR_OPACITY", sidebar_opacity), unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -445,6 +455,7 @@ def init_session_state():
         "role": "",
         "selected_table": None,
         "show_modal": False,
+        "sidebar_visible": False,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -930,6 +941,8 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
 # Sidebar inizia chiusa, si apre con il bottone 🗺️
 # ─────────────────────────────────────────────────────────────
 def render_sidebar_map():
+    if not st.session_state.sidebar_visible:
+        return
     with st.sidebar:
         st.markdown("""
         <div style="text-align:center; margin-bottom:12px; padding-top:8px;">
@@ -963,8 +976,10 @@ def main_dashboard():
     with col_actions:
         ac1, ac2, ac3 = st.columns(3)
         with ac1:
-            if st.button("🗺️", use_container_width=True, help="Apri mappa sala"):
-                st.session_state.sidebar_open = True
+            map_icon = "❌" if st.session_state.sidebar_visible else "🗺️"
+            map_help = "Chiudi mappa sala" if st.session_state.sidebar_visible else "Apri mappa sala"
+            if st.button(map_icon, use_container_width=True, help=map_help):
+                st.session_state.sidebar_visible = not st.session_state.sidebar_visible
                 st.rerun()
         with ac2:
             if st.button("🔄", use_container_width=True, help="Aggiorna dati"):
@@ -1006,8 +1021,8 @@ def main_dashboard():
 # MAIN
 # ─────────────────────────────────────────────────────────────
 def main():
-    inject_custom_css()
     init_session_state()
+    inject_custom_css()
     if not st.session_state.authenticated:
         login_page()
     else:
