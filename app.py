@@ -80,6 +80,7 @@ SHEET_COLUMNS = [
 ]
 
 LOGO_FILE = Path(__file__).with_name("logo_pescespada.jpg")
+LAYOUT_IMAGE_FILE = Path(__file__).with_name("layout_sidebar.png")
 
 # ─────────────────────────────────────────────────────────────
 # LOGO SVG — Pesce Spada Beach Club (pesce spada oro su fondo crema)
@@ -941,7 +942,10 @@ def render_sidebar_map():
             </div>
         </div>
         """, unsafe_allow_html=True)
-        st.markdown(FLOOR_PLAN_SVG, unsafe_allow_html=True)
+        if LAYOUT_IMAGE_FILE.exists():
+            st.image(str(LAYOUT_IMAGE_FILE), use_container_width=True)
+        else:
+            st.markdown(FLOOR_PLAN_SVG, unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
