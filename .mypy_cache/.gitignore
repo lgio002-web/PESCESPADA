@@ -1,0 +1,4 @@
+# Automatically created by mypy
+.streamlit/secrets.toml
+.streamlit/*.json
+*.gsheet
