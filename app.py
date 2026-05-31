@@ -1,7 +1,7 @@
 """
 Pesce Spada Beach Club — Sistema Prenotazioni Tavoli
-Streamlit Web App con Google Sheets (Service Account auth)
-Layout mappa compatto fedele alla planimetria ufficiale.
+Streamlit Web App con Google Sheets (gspread diretto)
+Design moderno ispirato al brand nautico.
 """
 
 import streamlit as st
@@ -15,8 +15,8 @@ import uuid
 # CONFIGURAZIONE PAGINA
 # ─────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Pesce Spada Beach Club — Prenotazioni",
-    page_icon="🐟",
+    page_title="Pesce Spada Beach Club",
+    page_icon="⚔️",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -24,17 +24,42 @@ st.set_page_config(
 # ─────────────────────────────────────────────────────────────
 # COSTANTI
 # ─────────────────────────────────────────────────────────────
+ZONES = {
+    "Spiaggia": {
+        "color": "#1E88E5",
+        "icon": "🏖️",
+        "tables": ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
+    },
+    "Privé": {
+        "color": "#7B1FA2",
+        "icon": "✨",
+        "tables": ["privè1", "privè2", "Privè3", "Privè4"]
+    },
+    "Sala": {
+        "color": "#F9A825",
+        "icon": "🍽️",
+        "tables": ["1", "2", "3", "4", "5", "7", "8", "10", "11", "14"]
+    },
+    "Veranda": {
+        "color": "#2E7D32",
+        "icon": "🌿",
+        "tables": ["V1", "V2", "15", "A1", "A2", "A3"]
+    },
+    "Patio": {
+        "color": "#EF6C00",
+        "icon": "☀️",
+        "tables": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10"]
+    },
+    "Bar": {
+        "color": "#C62828",
+        "icon": "🍹",
+        "tables": ["D1", "D2", "D3", "D4", "O1", "O2"]
+    },
+}
 
-ALL_TABLES = [
-    "S6", "S7", "S5", "S8",
-    "privè1", "privè2", "Privè3", "Privè4",
-    "S4", "S3", "S2", "S1", "S0",
-    "O1", "O2", "A3",
-    "1", "2", "3", "4", "5", "7", "8", "10", "11", "14",
-    "V1", "V2", "15", "A1", "A2",
-    "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10",
-    "D1", "D2", "D3", "D4",
-]
+ALL_TABLES = []
+for zone_data in ZONES.values():
+    ALL_TABLES.extend(zone_data["tables"])
 
 TIME_SLOTS = ["Pranzo", "Aperitivo", "Night"]
 BOOKING_SOURCES = ["IG", "TikTok", "Facebook", "Twitter", "Telefono", "SMS", "Altro"]
@@ -51,48 +76,206 @@ SHEET_COLUMNS = [
     "Fonte_Prenotazione", "Creato_Da", "Data_Creazione", "Ultima_Modifica"
 ]
 
+# ─────────────────────────────────────────────────────────────
+# LOGO SVG PESCE SPADA
+# ─────────────────────────────────────────────────────────────
+LOGO_SVG = """
+<svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" width="120" height="60">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4A843;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B8860B;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Pesce spada stilizzato -->
+  <path d="M10 30 Q20 20 40 25 L85 25 Q95 25 100 22 L115 18 Q105 25 100 28 L100 32 Q105 35 115 42 L100 38 Q95 35 85 35 L40 35 Q20 40 10 30 Z"
+        fill="url(#goldGrad)" opacity="0.95"/>
+  <!-- Occhio -->
+  <circle cx="35" cy="30" r="2.5" fill="#0D1B2A"/>
+  <!-- Pinna -->
+  <path d="M55 25 L60 15 L65 25 Z" fill="#D4A843" opacity="0.7"/>
+  <path d="M55 35 L60 45 L65 35 Z" fill="#D4A843" opacity="0.7"/>
+  <!-- Spada -->
+  <line x1="10" y1="30" x2="2" y2="30" stroke="#D4A843" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
+"""
 
 # ─────────────────────────────────────────────────────────────
-# CSS — COMPATTO, COLORI DA PLANIMETRIA
+# CSS DESIGN SYSTEM — NAVY + GOLD
 # ─────────────────────────────────────────────────────────────
 def inject_custom_css():
     st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        .stApp { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
-        .app-header {
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, #0a1628 0%, #1a2d4a 100%);
-            border-radius: 0 0 12px 12px;
-            margin: -1rem -1rem 0.5rem -1rem;
+        :root {
+            --navy-900: #0D1B2A;
+            --navy-800: #1B2838;
+            --navy-700: #1B3A4B;
+            --navy-600: #274C5B;
+            --gold-500: #D4A843;
+            --gold-400: #E8C468;
+            --gold-300: #F0D68A;
+            --sand-100: #FDF8F0;
+            --sand-200: #F5ECD7;
+            --success: #2E7D32;
+            --danger: #C62828;
+            --occupied: #E53935;
+            --free: #43A047;
         }
-        .app-header .title { color: #e8d5a3; font-size: 1.3rem; font-weight: 700;
-                             letter-spacing: 2px; text-transform: uppercase; }
-        .app-header .subtitle { color: rgba(255,255,255,0.6); font-size: 0.65rem; letter-spacing: 1px; }
 
-        .stat-row { display: flex; gap: 6px; margin: 0.3rem 0; }
-        .stat-box { flex:1; text-align:center; padding:0.3rem; border-radius:8px;
-                    border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); }
-        .stat-box .num { font-size:1.2rem; font-weight:700; }
-        .stat-box .lbl { font-size:0.55rem; text-transform:uppercase; letter-spacing:0.5px; opacity:0.6; }
+        .stApp {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, var(--navy-900) 0%, #0F2136 100%);
+        }
 
-        .zone-tag { display:inline-block; padding:2px 8px; border-radius:4px; font-weight:700;
-                    font-size:0.65rem; letter-spacing:1px; text-transform:uppercase; margin:0.3rem 0 0.1rem 0; }
-        .zone-spiaggia { background:#2196F3; color:white; }
-        .zone-sala { background:#FFC107; color:#333; }
-        .zone-veranda { background:#4CAF50; color:white; }
-        .zone-patio { background:#8BC34A; color:#333; }
-        .zone-bar { background:#FF9800; color:#333; }
-        .zone-prive { background:#9C27B0; color:white; }
-
-        div[data-testid="stHorizontalBlock"] { gap: 0.12rem !important; }
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {visibility: hidden;}
-        .block-container { padding-top:0.5rem !important; padding-bottom:0.5rem !important; }
-        div[data-testid="stVerticalBlock"] { gap: 0.2rem !important; }
+
+        .block-container {
+            padding: 1rem 2rem !important;
+            max-width: 1400px;
+        }
+
+        /* Header Brand */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 50%, var(--navy-700) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(212, 168, 67, 0.3);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .brand-header .brand-text {
+            text-align: left;
+        }
+        .brand-header .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold-500);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+        .brand-header .brand-sub {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* Stats */
+        .stats-container {
+            display: flex;
+            gap: 12px;
+            margin: 1rem 0;
+        }
+        .stat-card {
+            flex: 1;
+            background: rgba(27, 40, 56, 0.8);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .stat-card .stat-num {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+        }
+        .stat-card .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+        }
+
+        /* Zone Headers */
+        .zone-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 1rem 0 0.5rem 0;
+            color: white;
+        }
+
+        /* Login */
+        .login-container {
+            max-width: 400px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: rgba(27, 40, 56, 0.9);
+            border-radius: 20px;
+            border: 1px solid rgba(212, 168, 67, 0.2);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+        }
+        .login-brand {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-brand .name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--gold-500);
+            letter-spacing: 2px;
+        }
+        .login-brand .sub {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Reservation card in list */
+        .res-card {
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .res-card .res-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .res-card .res-table {
+            background: rgba(212,168,67,0.2);
+            color: var(--gold-400);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .res-card .res-name {
+            color: white;
+            font-weight: 600;
+        }
+        .res-card .res-meta {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+        }
+
+        div[data-testid="stVerticalBlock"] { gap: 0.5rem !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -115,19 +298,23 @@ def init_session_state():
 
 def login_page():
     st.markdown("")
-    col1, col2, col3 = st.columns([1, 1.2, 1])
+    st.markdown("")
+    col1, col2, col3 = st.columns([1, 1.5, 1])
     with col2:
-        st.markdown("""
-        <div style="text-align:center; margin-bottom:1rem;">
-            <div style="font-size:2rem; color:#e8d5a3; font-weight:700; letter-spacing:2px;">🐟 PESCE SPADA</div>
-            <div style="font-size:0.75rem; color:#888; letter-spacing:1px;">BEACH CLUB — PRENOTAZIONI</div>
+        st.markdown(f"""
+        <div class="login-container">
+            <div class="login-brand">
+                {LOGO_SVG}
+                <div class="name">PESCE SPADA</div>
+                <div class="sub">Beach Club &middot; Gestione Tavoli</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
         with st.form("login_form"):
-            username = st.text_input("Username", placeholder="Username")
-            password = st.text_input("Password", type="password", placeholder="Password")
-            submitted = st.form_submit_button("Accedi", use_container_width=True)
+            username = st.text_input("Username", placeholder="Inserisci username")
+            password = st.text_input("Password", type="password", placeholder="Inserisci password")
+            submitted = st.form_submit_button("Accedi", use_container_width=True, type="primary")
             if submitted:
                 if username in USERS and USERS[username]["password"] == password:
                     st.session_state.authenticated = True
@@ -139,9 +326,8 @@ def login_page():
 
 
 def logout():
-    for k in ["authenticated", "username", "role", "selected_table", "show_modal"]:
-        if k in st.session_state:
-            del st.session_state[k]
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
     st.rerun()
 
 
@@ -153,8 +339,8 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
+
 def get_gspread_client():
-    """Crea client gspread da st.secrets."""
     secrets = st.secrets["connections"]["gsheets"]
     creds_dict = {
         "type": secrets["type"],
@@ -173,7 +359,6 @@ def get_gspread_client():
 
 
 def get_worksheet():
-    """Apre il foglio Prenotazioni, lo crea se non esiste."""
     client = get_gspread_client()
     spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
     sh = client.open_by_url(spreadsheet_url)
@@ -193,7 +378,6 @@ def load_reservations():
         if not data:
             return pd.DataFrame(columns=SHEET_COLUMNS)
         df = pd.DataFrame(data)
-        # Assicura che le colonne corrispondano
         for col in SHEET_COLUMNS:
             if col not in df.columns:
                 df[col] = ""
@@ -210,7 +394,6 @@ def save_reservations(df):
     try:
         ws = get_worksheet()
         ws.clear()
-        # Scrivi header + dati
         data_to_write = [SHEET_COLUMNS] + df[SHEET_COLUMNS].values.tolist()
         ws.update(range_name="A1", values=data_to_write)
         st.cache_data.clear()
@@ -220,7 +403,18 @@ def save_reservations(df):
         return False
 
 
+def is_table_booked(table, data_str, fascia):
+    """Verifica se il tavolo e' gia' prenotato per data+fascia."""
+    df = load_reservations()
+    mask = (df["Tavolo"] == table) & (df["Data"] == data_str) & (df["Fascia_Oraria"] == fascia)
+    return not df[mask].empty
+
+
 def add_reservation(table, cliente, data_str, fascia, fonte):
+    if is_table_booked(table, data_str, fascia):
+        st.error(f"Il tavolo {table} e' gia' prenotato per {fascia} del {data_str}!")
+        return False
+
     df = load_reservations()
     new_id = str(uuid.uuid4())[:8].upper()
     now = datetime.now().strftime("%d-%m-%Y %H:%M")
@@ -241,6 +435,12 @@ def add_reservation(table, cliente, data_str, fascia, fonte):
 
 def update_reservation(res_id, table, cliente, data_str, fascia, fonte):
     df = load_reservations()
+    other = df[df["ID"] != res_id]
+    conflict = other[(other["Tavolo"] == table) & (other["Data"] == data_str) & (other["Fascia_Oraria"] == fascia)]
+    if not conflict.empty:
+        st.error(f"Il tavolo {table} e' gia' prenotato per {fascia} del {data_str}!")
+        return False
+
     now = datetime.now().strftime("%d-%m-%Y %H:%M")
     mask = df["ID"] == res_id
     df.loc[mask, "Tavolo"] = table
@@ -267,11 +467,12 @@ def get_reservations_for_date_slot(df, target_date_str, time_slot):
 # COMPONENTI UI
 # ─────────────────────────────────────────────────────────────
 def render_header():
-    st.markdown("""
-    <div class="app-header">
-        <div>
-            <div class="title">🐟 PESCE SPADA</div>
-            <div class="subtitle">BEACH CLUB — Gestione Prenotazioni</div>
+    st.markdown(f"""
+    <div class="brand-header">
+        <div>{LOGO_SVG}</div>
+        <div class="brand-text">
+            <div class="brand-name">Pesce Spada</div>
+            <div class="brand-sub">Beach Club &middot; Sistema Prenotazioni</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -281,131 +482,86 @@ def render_stats(filtered_df):
     total = len(ALL_TABLES)
     occupied = len(filtered_df["Tavolo"].unique())
     free = total - occupied
-    pct = (occupied / total * 100) if total > 0 else 0
+    pct = int(occupied / total * 100) if total > 0 else 0
 
     st.markdown(f"""
-    <div class="stat-row">
-        <div class="stat-box"><div class="num">{total}</div><div class="lbl">Totali</div></div>
-        <div class="stat-box"><div class="num" style="color:#4CAF50">{free}</div><div class="lbl">Liberi</div></div>
-        <div class="stat-box"><div class="num" style="color:#f44336">{occupied}</div><div class="lbl">Occupati</div></div>
-        <div class="stat-box"><div class="num">{pct:.0f}%</div><div class="lbl">Occup.</div></div>
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-num" style="color: white;">{total}</div>
+            <div class="stat-label">Tavoli Totali</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" style="color: #66BB6A;">{free}</div>
+            <div class="stat-label">Disponibili</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" style="color: #EF5350;">{occupied}</div>
+            <div class="stat-label">Occupati</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" style="color: #E8C468;">{pct}%</div>
+            <div class="stat-label">Occupazione</div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
-# MAPPA TAVOLI — LAYOUT FEDELE ALLA PLANIMETRIA
+# MAPPA TAVOLI — GRIGLIA PER ZONA
 # ─────────────────────────────────────────────────────────────
-def tb(name, occ, zk):
-    """Bottone tavolo compatto."""
-    is_occ = name in occ
-    emoji = "🔴" if is_occ else "🟢"
-    btn_type = "primary" if is_occ else "secondary"
-    if st.button(f"{emoji}{name}", key=f"t_{zk}_{name}",
-                 use_container_width=True, type=btn_type):
-        st.session_state.selected_table = name
-        st.session_state.show_modal = True
-        st.rerun()
+def render_table_map(filtered_df):
+    """Mappa tavoli divisa per zone con nome ospite visibile."""
+    occupied_map = {}
+    for _, row in filtered_df.iterrows():
+        occupied_map[row["Tavolo"]] = row["Cliente"]
 
+    for zone_name, zone_data in ZONES.items():
+        color = zone_data["color"]
+        icon = zone_data["icon"]
+        tables = zone_data["tables"]
 
-def render_table_map(occ):
-    """Mappa compatta fedele alla planimetria."""
+        st.markdown(
+            f'<div class="zone-header" style="background:{color};">'
+            f'{icon} {zone_name} &mdash; {len(tables)} tavoli</div>',
+            unsafe_allow_html=True
+        )
 
-    # ══ SPIAGGIA TOP + PRIVÉ ══
-    st.markdown('<span class="zone-tag zone-spiaggia">🏖 Spiaggia</span> '
-                '<span class="zone-tag zone-prive">Privé</span>',
-                unsafe_allow_html=True)
-    c = st.columns(8)
-    with c[0]: tb("S6", occ, "st1")
-    with c[1]: tb("S7", occ, "st1")
-    with c[2]: tb("S5", occ, "st2")
-    with c[3]: tb("S8", occ, "st2")
-    with c[4]: tb("privè2", occ, "pr")
-    with c[5]: tb("Privè3", occ, "pr")
-    with c[6]: tb("privè1", occ, "pr2")
-    with c[7]: tb("Privè4", occ, "pr2")
+        cols_per_row = 6
+        rows_needed = (len(tables) + cols_per_row - 1) // cols_per_row
 
-    # ══ BEACH LAT | SALA | VERANDA ══
-    beach_col, sala_col, ver_col = st.columns([1.2, 3, 1.8])
+        for row_idx in range(rows_needed):
+            cols = st.columns(cols_per_row)
+            for col_idx in range(cols_per_row):
+                table_idx = row_idx * cols_per_row + col_idx
+                if table_idx >= len(tables):
+                    break
+                table_name = tables[table_idx]
+                guest = occupied_map.get(table_name)
+                is_occupied = guest is not None
 
-    with beach_col:
-        st.markdown('<span class="zone-tag zone-spiaggia">Beach</span>', unsafe_allow_html=True)
-        tb("S4", occ, "bl")
-        tb("O2", occ, "bl")
-        tb("S3", occ, "bl")
-        r1, r2 = st.columns(2)
-        with r1: tb("S0", occ, "bl2")
-        with r2: tb("A3", occ, "bl2")
-        tb("O1", occ, "bl3")
-        tb("S2", occ, "bl3")
-        tb("S1", occ, "bl3")
+                with cols[col_idx]:
+                    if is_occupied:
+                        short_name = guest[:12] if len(guest) > 12 else guest
+                        label = f"🔴 {table_name}\n{short_name}"
+                    else:
+                        label = f"🟢 {table_name}\nLibero"
 
-    with sala_col:
-        st.markdown('<span class="zone-tag zone-sala">🍽 Sala</span>', unsafe_allow_html=True)
-        r = st.columns(4)
-        with r[0]: tb("4", occ, "sa1")
-        with r[1]: tb("5", occ, "sa1")
-        with r[2]: st.write("")
-        with r[3]: tb("14", occ, "sa1")
-
-        r = st.columns(4)
-        with r[0]: tb("3", occ, "sa2")
-        with r[1]: tb("7", occ, "sa2")
-
-        r = st.columns(4)
-        with r[0]: tb("2", occ, "sa3")
-        with r[1]: tb("8", occ, "sa3")
-
-        r = st.columns(4)
-        with r[0]: tb("1", occ, "sa4")
-        with r[1]: tb("10", occ, "sa4")
-        with r[2]: st.write("")
-        with r[3]: tb("11", occ, "sa4")
-
-    with ver_col:
-        st.markdown('<span class="zone-tag zone-veranda">🌿 Veranda</span>', unsafe_allow_html=True)
-        tb("V2", occ, "ve")
-        tb("15", occ, "ve")
-        tb("V1", occ, "ve")
-        r1, r2 = st.columns(2)
-        with r1: tb("A2", occ, "ve2")
-        with r2: tb("A1", occ, "ve2")
-
-    # ══ PATIO ══
-    st.markdown('<span class="zone-tag zone-patio">☀ Patio</span>', unsafe_allow_html=True)
-    c = st.columns(7)
-    with c[3]: tb("P4", occ, "pa1")
-    with c[4]: tb("P1", occ, "pa1")
-
-    c = st.columns(7)
-    with c[0]: tb("P9", occ, "pa2")
-    with c[1]: tb("P7", occ, "pa2")
-    with c[2]: tb("P5", occ, "pa2")
-    with c[3]: tb("P2", occ, "pa2")
-
-    c = st.columns(7)
-    with c[0]: tb("P10", occ, "pa3")
-    with c[1]: tb("P8", occ, "pa3")
-    with c[2]: tb("P6", occ, "pa3")
-    with c[3]: tb("P3", occ, "pa3")
-
-    # ══ BAR ══
-    st.markdown('<span class="zone-tag zone-bar">🍹 Bar</span>', unsafe_allow_html=True)
-    c = st.columns(6)
-    with c[0]: tb("D4", occ, "ba")
-    with c[1]:
-        st.markdown('<div style="background:#FFC107;color:#333;text-align:center;'
-                    'padding:0.4rem;border-radius:6px;font-weight:700;font-size:0.75rem;">'
-                    'TIKI BAR</div>', unsafe_allow_html=True)
-    with c[2]: tb("D3", occ, "ba")
-    with c[3]: tb("D2", occ, "ba")
-    with c[4]: tb("D1", occ, "ba")
+                    btn_type = "primary" if is_occupied else "secondary"
+                    if st.button(
+                        label,
+                        key=f"tbl_{zone_name}_{table_name}",
+                        use_container_width=True,
+                        type=btn_type,
+                    ):
+                        st.session_state.selected_table = table_name
+                        st.session_state.show_modal = True
+                        st.rerun()
 
 
 # ─────────────────────────────────────────────────────────────
-# MODALI CRUD
+# CRUD PANEL
 # ─────────────────────────────────────────────────────────────
-def render_crud_modal(filtered_df, selected_date, selected_slot):
+def render_crud_panel(filtered_df, selected_date, selected_slot):
     table_name = st.session_state.selected_table
     if not table_name:
         return
@@ -413,44 +569,65 @@ def render_crud_modal(filtered_df, selected_date, selected_slot):
     table_res = filtered_df[filtered_df["Tavolo"] == table_name]
     is_occupied = not table_res.empty
 
+    # Zona del tavolo
+    table_zone = ""
+    table_color = "#555"
+    for zn, zd in ZONES.items():
+        if table_name in zd["tables"]:
+            table_zone = zn
+            table_color = zd["color"]
+            break
+
+    st.markdown(f"""
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:0.8rem;">
+        <div style="background:{table_color}; color:white; padding:8px 16px;
+                    border-radius:8px; font-weight:700; font-size:1.2rem;">
+            {'🔴' if is_occupied else '🟢'} {table_name}
+        </div>
+        <div>
+            <div style="color:white; font-weight:600;">{table_zone}</div>
+            <div style="color:rgba(255,255,255,0.5); font-size:0.8rem;">
+                {selected_date.strftime('%d/%m/%Y')} &middot; {selected_slot}
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     if is_occupied:
         reservation = table_res.iloc[0]
-        _modal_occupied(reservation, table_name, selected_date, selected_slot)
+        _render_occupied(reservation, table_name, selected_date, selected_slot)
     else:
-        _modal_empty(table_name, selected_date, selected_slot)
+        _render_empty(table_name, selected_date, selected_slot)
 
 
-def _modal_empty(table_name, selected_date, selected_slot):
+def _render_empty(table_name, selected_date, selected_slot):
     is_admin = st.session_state.role == "admin"
 
-    st.markdown(f"**🟢 {table_name}** — Disponibile · "
-                f"{selected_date.strftime('%d-%m-%Y')} · {selected_slot}")
-
     if is_admin:
-        with st.form("add_form"):
-            c1, c2, c3 = st.columns([3, 2, 2])
-            with c1:
-                cliente = st.text_input("Cliente *", placeholder="Nome")
-            with c2:
-                fonte = st.selectbox("Fonte", BOOKING_SOURCES)
-            with c3:
-                fascia = st.selectbox("Fascia", TIME_SLOTS,
+        st.markdown("##### Nuova Prenotazione")
+        with st.form("add_form", clear_on_submit=True):
+            col1, col2 = st.columns(2)
+            with col1:
+                cliente = st.text_input("Nome Cliente *", placeholder="Nome e cognome")
+                fonte = st.selectbox("Fonte Prenotazione", BOOKING_SOURCES)
+            with col2:
+                data_res = st.date_input("Data", value=selected_date, format="DD/MM/YYYY")
+                fascia = st.selectbox("Fascia Oraria", TIME_SLOTS,
                                       index=TIME_SLOTS.index(selected_slot))
-            data_res = st.date_input("Data", value=selected_date, format="DD/MM/YYYY")
 
-            bc1, bc2 = st.columns(2)
-            with bc1:
-                submitted = st.form_submit_button("✅ Conferma", use_container_width=True)
-            with bc2:
-                cancel = st.form_submit_button("❌ Annulla", use_container_width=True)
+            col_ok, col_no = st.columns(2)
+            with col_ok:
+                submitted = st.form_submit_button("Conferma Prenotazione", use_container_width=True, type="primary")
+            with col_no:
+                cancel = st.form_submit_button("Annulla", use_container_width=True)
 
             if submitted:
                 if not cliente.strip():
-                    st.error("Nome obbligatorio!")
+                    st.error("Il nome del cliente e' obbligatorio!")
                 else:
                     data_str = data_res.strftime("%d-%m-%Y")
                     if add_reservation(table_name, cliente.strip(), data_str, fascia, fonte):
-                        st.success(f"✅ {cliente} → {table_name}")
+                        st.success(f"Prenotazione confermata: {cliente} -> Tavolo {table_name}")
                         st.session_state.show_modal = False
                         st.session_state.selected_table = None
                         st.rerun()
@@ -459,78 +636,98 @@ def _modal_empty(table_name, selected_date, selected_slot):
                 st.session_state.selected_table = None
                 st.rerun()
     else:
-        st.info("Tavolo libero per questa fascia oraria.")
-        if st.button("Chiudi", key="close_empty_modal"):
+        st.info("Tavolo disponibile per questa fascia oraria.")
+        if st.button("Chiudi", key="close_empty"):
             st.session_state.show_modal = False
             st.session_state.selected_table = None
             st.rerun()
 
 
-def _modal_occupied(reservation, table_name, selected_date, selected_slot):
+def _render_occupied(reservation, table_name, selected_date, selected_slot):
     is_admin = st.session_state.role == "admin"
 
-    st.markdown(f"**🔴 {table_name}** — {reservation['Cliente']} · "
-                f"{reservation['Fonte_Prenotazione']} · `{reservation['ID']}`")
+    # Info prenotazione
+    st.markdown(f"""
+    <div style="background:rgba(27,40,56,0.8); border:1px solid rgba(212,168,67,0.3);
+                border-radius:12px; padding:1rem; margin-bottom:1rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <div style="color:#E8C468; font-weight:700; font-size:1.1rem;">
+                    {reservation['Cliente']}
+                </div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.8rem; margin-top:4px;">
+                    Fonte: {reservation['Fonte_Prenotazione']} &middot; ID: {reservation['ID']}
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <div style="color:rgba(255,255,255,0.6); font-size:0.75rem;">
+                    Creato da: {reservation['Creato_Da']}
+                </div>
+                <div style="color:rgba(255,255,255,0.4); font-size:0.7rem;">
+                    {reservation['Data_Creazione']}
+                </div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     if is_admin:
-        tab_edit, tab_delete = st.tabs(["✏️ Modifica", "🗑️ Elimina"])
+        tab_edit, tab_delete = st.tabs(["Modifica", "Elimina"])
 
         with tab_edit:
             with st.form("edit_form"):
-                c1, c2, c3 = st.columns([3, 2, 2])
-                with c1:
-                    cliente = st.text_input("Cliente *", value=reservation["Cliente"])
-                with c2:
+                col1, col2 = st.columns(2)
+                with col1:
+                    cliente = st.text_input("Cliente", value=reservation["Cliente"])
                     fonte_idx = BOOKING_SOURCES.index(reservation["Fonte_Prenotazione"]) \
                         if reservation["Fonte_Prenotazione"] in BOOKING_SOURCES else 0
                     fonte = st.selectbox("Fonte", BOOKING_SOURCES, index=fonte_idx)
-                with c3:
-                    fascia_idx = TIME_SLOTS.index(reservation["Fascia_Oraria"]) \
-                        if reservation["Fascia_Oraria"] in TIME_SLOTS else 0
-                    fascia = st.selectbox("Fascia", TIME_SLOTS, index=fascia_idx)
-
-                c4, c5 = st.columns(2)
-                with c4:
+                with col2:
                     try:
                         cur_date = datetime.strptime(reservation["Data"], "%d-%m-%Y").date()
                     except (ValueError, TypeError):
                         cur_date = selected_date
                     data_res = st.date_input("Data", value=cur_date, format="DD/MM/YYYY")
-                with c5:
-                    tavolo_idx = ALL_TABLES.index(table_name) if table_name in ALL_TABLES else 0
-                    nuovo_tavolo = st.selectbox("Tavolo", ALL_TABLES, index=tavolo_idx)
+                    fascia_idx = TIME_SLOTS.index(reservation["Fascia_Oraria"]) \
+                        if reservation["Fascia_Oraria"] in TIME_SLOTS else 0
+                    fascia = st.selectbox("Fascia", TIME_SLOTS, index=fascia_idx)
 
-                submitted = st.form_submit_button("💾 Salva", use_container_width=True)
-                if submitted:
+                tavolo_idx = ALL_TABLES.index(table_name) if table_name in ALL_TABLES else 0
+                nuovo_tavolo = st.selectbox("Sposta a tavolo", ALL_TABLES, index=tavolo_idx)
+
+                if st.form_submit_button("Salva Modifiche", use_container_width=True, type="primary"):
                     if not cliente.strip():
                         st.error("Nome obbligatorio!")
                     else:
                         data_str = data_res.strftime("%d-%m-%Y")
                         if update_reservation(reservation["ID"], nuovo_tavolo,
                                               cliente.strip(), data_str, fascia, fonte):
-                            st.success("✅ Aggiornato!")
+                            st.success("Prenotazione aggiornata!")
                             st.session_state.show_modal = False
                             st.session_state.selected_table = None
                             st.rerun()
 
         with tab_delete:
-            st.warning(f"Eliminare **{reservation['Cliente']}** da **{table_name}**?")
-            dc1, dc2 = st.columns(2)
-            with dc1:
-                if st.button("🗑️ Conferma Eliminazione", type="primary",
-                             use_container_width=True, key="btn_del"):
+            st.warning(f"Sei sicuro di voler eliminare la prenotazione di **{reservation['Cliente']}** "
+                       f"al tavolo **{table_name}**?")
+            st.caption("Questa azione non puo' essere annullata.")
+
+            col_del, col_cancel = st.columns(2)
+            with col_del:
+                if st.button("Elimina Prenotazione", type="primary",
+                             use_container_width=True, key="btn_del_confirm"):
                     if delete_reservation(reservation["ID"]):
-                        st.success("✅ Prenotazione eliminata!")
+                        st.success("Prenotazione eliminata!")
                         st.session_state.show_modal = False
                         st.session_state.selected_table = None
                         st.rerun()
-            with dc2:
-                if st.button("Annulla", use_container_width=True, key="btn_cancel_del"):
+            with col_cancel:
+                if st.button("Annulla", use_container_width=True, key="btn_del_cancel"):
                     st.session_state.show_modal = False
                     st.session_state.selected_table = None
                     st.rerun()
     else:
-        st.info("Sola lettura.")
+        st.info(f"Prenotazione a nome **{reservation['Cliente']}**")
         if st.button("Chiudi", key="close_occ"):
             st.session_state.show_modal = False
             st.session_state.selected_table = None
@@ -543,25 +740,23 @@ def _modal_occupied(reservation, table_name, selected_date, selected_slot):
 def main_dashboard():
     render_header()
 
-    # Top bar compatta
-    c1, c2, c3, c4 = st.columns([1.5, 2, 2, 1.5])
-    with c1:
-        role_lbl = "👑 Admin" if st.session_state.role == "admin" else "👁 Viewer"
-        st.markdown(f"**{role_lbl}** — {st.session_state.username}")
-    with c2:
-        selected_date = st.date_input("📅 Data", value=date.today(),
-                                       format="DD/MM/YYYY", key="fdate",
-                                       label_visibility="collapsed")
-    with c3:
-        selected_slot = st.selectbox("Fascia", TIME_SLOTS, key="fslot",
-                                      label_visibility="collapsed")
-    with c4:
-        bc1, bc2 = st.columns(2)
-        with bc1:
-            if st.button("🔄", use_container_width=True, help="Aggiorna"):
+    # Toolbar
+    col_user, col_date, col_slot, col_actions = st.columns([2, 2, 2, 1.5])
+    with col_user:
+        role_icon = "👑" if st.session_state.role == "admin" else "👁️"
+        st.markdown(f"**{role_icon} {st.session_state.username.capitalize()}**")
+    with col_date:
+        selected_date = st.date_input("Data", value=date.today(),
+                                       format="DD/MM/YYYY", key="filter_date")
+    with col_slot:
+        selected_slot = st.selectbox("Fascia Oraria", TIME_SLOTS, key="filter_slot")
+    with col_actions:
+        ac1, ac2 = st.columns(2)
+        with ac1:
+            if st.button("🔄", use_container_width=True, help="Aggiorna dati"):
                 st.cache_data.clear()
                 st.rerun()
-        with bc2:
+        with ac2:
             if st.button("🚪", use_container_width=True, help="Logout"):
                 logout()
 
@@ -570,36 +765,57 @@ def main_dashboard():
     selected_date_str = selected_date.strftime("%d-%m-%Y")
     filtered_df = get_reservations_for_date_slot(df, selected_date_str, selected_slot)
 
-    # Statistiche compatte
+    # Statistiche
     render_stats(filtered_df)
 
-    # Modale CRUD sopra la mappa per velocità
+    # Panel CRUD (se tavolo selezionato)
     if st.session_state.show_modal and st.session_state.selected_table:
         with st.container(border=True):
-            render_crud_modal(filtered_df, selected_date, selected_slot)
+            render_crud_panel(filtered_df, selected_date, selected_slot)
+        st.divider()
 
     # Mappa tavoli
-    st.caption("🟢 Libero · 🔴 Occupato — clicca per interagire")
-    occupied = filtered_df["Tavolo"].unique().tolist()
-    render_table_map(occupied)
+    st.markdown("##### Mappa Tavoli")
+    st.caption("Clicca su un tavolo per prenotare, modificare o eliminare")
+    render_table_map(filtered_df)
 
-    # Lista prenotazioni
-    with st.expander("📋 Prenotazioni", expanded=False):
+    # Lista prenotazioni attive
+    st.divider()
+    with st.expander(f"Prenotazioni attive - {selected_slot} {selected_date.strftime('%d/%m/%Y')}", expanded=False):
         if filtered_df.empty:
-            st.info("Nessuna prenotazione.")
+            st.info("Nessuna prenotazione per questa fascia.")
         else:
             for _, row in filtered_df.iterrows():
-                st.markdown(f"• **{row['Tavolo']}** — {row['Cliente']} "
-                            f"({row['Fonte_Prenotazione']}) `{row['ID']}`")
+                col_info, col_action = st.columns([5, 1])
+                with col_info:
+                    st.markdown(
+                        f"**{row['Tavolo']}** — {row['Cliente']} "
+                        f"*({row['Fonte_Prenotazione']})* `{row['ID']}`"
+                    )
+                with col_action:
+                    if st.session_state.role == "admin":
+                        if st.button("🗑️", key=f"del_list_{row['ID']}", help="Elimina"):
+                            delete_reservation(row["ID"])
+                            st.rerun()
 
-    # DB completo (admin)
+    # Database completo (admin)
     if st.session_state.role == "admin":
-        with st.expander("📊 Database", expanded=False):
+        with st.expander("Database Completo", expanded=False):
             if not df.empty:
-                st.dataframe(df.sort_values("Data", ascending=False),
-                             use_container_width=True, hide_index=True)
+                st.dataframe(
+                    df.sort_values("Data", ascending=False),
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "ID": st.column_config.TextColumn("ID", width="small"),
+                        "Tavolo": st.column_config.TextColumn("Tavolo", width="small"),
+                        "Cliente": st.column_config.TextColumn("Cliente", width="medium"),
+                        "Data": st.column_config.TextColumn("Data", width="small"),
+                        "Fascia_Oraria": st.column_config.TextColumn("Fascia", width="small"),
+                    }
+                )
             else:
-                st.info("Vuoto.")
+                st.info("Database vuoto.")
 
 
 # ─────────────────────────────────────────────────────────────
