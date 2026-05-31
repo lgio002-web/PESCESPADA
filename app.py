@@ -9,11 +9,10 @@ import gspread
 from google.oauth2.service_account import Credentials
 import pandas as pd
 from datetime import datetime, date
+from pathlib import Path
 import uuid
 import time
 from ui_assets import FLOOR_PLAN_SVG as ASSET_FLOOR_PLAN_SVG
-from ui_assets import LOGO_SMALL_SVG as ASSET_LOGO_SMALL_SVG
-from ui_assets import LOGO_SVG as ASSET_LOGO_SVG
 
 # ─────────────────────────────────────────────────────────────
 # CONFIGURAZIONE PAGINA
@@ -79,6 +78,8 @@ SHEET_COLUMNS = [
     "ID", "Tavolo", "Cliente", "Data", "Fascia_Oraria",
     "Fonte_Prenotazione", "Creato_Da", "Data_Creazione", "Ultima_Modifica"
 ]
+
+LOGO_FILE = Path(__file__).with_name("logo_pescespada.jpg")
 
 # ─────────────────────────────────────────────────────────────
 # LOGO SVG — Pesce Spada Beach Club (pesce spada oro su fondo crema)
@@ -301,8 +302,6 @@ FLOOR_PLAN_SVG = """
 </svg>
 """
 
-LOGO_SVG = ASSET_LOGO_SVG
-LOGO_SMALL_SVG = ASSET_LOGO_SMALL_SVG
 FLOOR_PLAN_SVG = ASSET_FLOOR_PLAN_SVG
 
 
@@ -467,11 +466,8 @@ def login_page():
     st.markdown("")
     col1, col2, col3 = st.columns([1, 1.5, 1])
     with col2:
-        st.markdown(f"""
-        <div class="login-box">
-            {LOGO_SVG}
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            st.image(str(LOGO_FILE), use_container_width=True)
 
         with st.form("login_form"):
             username = st.text_input("Username", placeholder="Username")
@@ -668,11 +664,10 @@ def get_table_reservation_for_date(date_df, table_name, selected_slot):
 # COMPONENTI UI
 # ─────────────────────────────────────────────────────────────
 def render_header():
-    st.markdown(f"""
-    <div class="brand-header">
-        {LOGO_SMALL_SVG}
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container(border=True):
+        col_left, col_center, col_right = st.columns([1, 2.2, 1])
+        with col_center:
+            st.image(str(LOGO_FILE), use_container_width=True)
 
 
 def render_stats(filtered_df):
@@ -956,34 +951,33 @@ def main_dashboard():
     render_sidebar_map()
     render_header()
 
-    st.markdown('<div class="calendar-bar">', unsafe_allow_html=True)
-    col_user, col_date, col_slot, col_actions = st.columns([2, 2.2, 2, 1.7])
-    with col_user:
-        role_icon = "👑" if st.session_state.role == "admin" else "👁️"
-        st.markdown(f"**{role_icon} {st.session_state.username.capitalize()}**  ")
-        st.caption("Portale prenotazioni: consulta, inserisci, modifica o cancella")
-    with col_date:
-        selected_date = st.date_input("Calendario prenotazioni", value=date.today(),
-                                       format="DD/MM/YYYY", key="filter_date")
-    with col_slot:
-        selected_slot = st.selectbox("Fascia oraria", TIME_SLOTS, key="filter_slot")
-        st.caption("Seleziona giornata e fascia da visualizzare")
-    with col_actions:
-        ac1, ac2, ac3 = st.columns(3)
-        with ac1:
-            map_icon = "❌" if st.session_state.sidebar_visible else "🗺️"
-            map_help = "Chiudi mappa sala" if st.session_state.sidebar_visible else "Apri mappa sala"
-            if st.button(map_icon, use_container_width=True, help=map_help):
-                st.session_state.sidebar_visible = not st.session_state.sidebar_visible
-                st.rerun()
-        with ac2:
-            if st.button("🔄", use_container_width=True, help="Aggiorna dati"):
-                load_reservations.clear()
-                st.rerun()
-        with ac3:
-            if st.button("🚪", use_container_width=True, help="Logout"):
-                logout()
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        col_user, col_date, col_slot, col_actions = st.columns([2, 2.2, 2, 1.7])
+        with col_user:
+            role_icon = "👑" if st.session_state.role == "admin" else "👁️"
+            st.markdown(f"**{role_icon} {st.session_state.username.capitalize()}**  ")
+            st.caption("Portale prenotazioni: consulta, inserisci, modifica o cancella")
+        with col_date:
+            selected_date = st.date_input("Calendario prenotazioni", value=date.today(),
+                                           format="DD/MM/YYYY", key="filter_date")
+        with col_slot:
+            selected_slot = st.selectbox("Fascia oraria", TIME_SLOTS, key="filter_slot")
+            st.caption("Seleziona giornata e fascia da visualizzare")
+        with col_actions:
+            ac1, ac2, ac3 = st.columns(3)
+            with ac1:
+                map_icon = "❌" if st.session_state.sidebar_visible else "🗺️"
+                map_help = "Chiudi mappa sala" if st.session_state.sidebar_visible else "Apri mappa sala"
+                if st.button(map_icon, use_container_width=True, help=map_help):
+                    st.session_state.sidebar_visible = not st.session_state.sidebar_visible
+                    st.rerun()
+            with ac2:
+                if st.button("🔄", use_container_width=True, help="Aggiorna dati"):
+                    load_reservations.clear()
+                    st.rerun()
+            with ac3:
+                if st.button("🚪", use_container_width=True, help="Logout"):
+                    logout()
 
     # Dati
     df = load_reservations()
