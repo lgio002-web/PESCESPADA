@@ -173,11 +173,16 @@ def get_gspread_client():
 
 
 def get_worksheet():
-    """Apre il foglio Prenotazioni."""
+    """Apre il foglio Prenotazioni, lo crea se non esiste."""
     client = get_gspread_client()
     spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
     sh = client.open_by_url(spreadsheet_url)
-    return sh.worksheet("Prenotazioni")
+    try:
+        return sh.worksheet("Prenotazioni")
+    except gspread.exceptions.WorksheetNotFound:
+        ws = sh.add_worksheet(title="Prenotazioni", rows=1000, cols=len(SHEET_COLUMNS))
+        ws.update(range_name="A1", values=[SHEET_COLUMNS])
+        return ws
 
 
 @st.cache_data(ttl=30)
