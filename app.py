@@ -408,9 +408,13 @@ def inject_custom_css():
             border-radius: 8px !important;
             font-weight: 600 !important;
             font-size: 0.78rem !important;
-            min-height: 54px !important;
+            min-height: 82px !important;
             white-space: pre-wrap !important;
             line-height: 1.3 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
         }
 
         /* Sidebar */
@@ -431,15 +435,12 @@ def inject_custom_css():
             pointer-events: none !important;
         }
 
-        .table-name {
-            text-align: center;
-            font-size: 0.72rem;
-            min-height: 1.4rem;
-            margin-top: 0.1rem;
-            margin-bottom: 0.35rem;
-            color: var(--gold-light);
-            font-weight: 600;
-            line-height: 1.15;
+        .calendar-bar {
+            background: var(--bg-card);
+            border: 1px solid rgba(197, 165, 90, 0.18);
+            border-radius: 14px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.8rem;
         }
     </style>
     """.replace("SIDEBAR_TRANSFORM", sidebar_transform).replace("SIDEBAR_OPACITY", sidebar_opacity), unsafe_allow_html=True)
@@ -742,10 +743,10 @@ def render_table_map(date_df, selected_slot):
                 with cols[col_idx]:
                     if is_occupied:
                         guest = reservation["cliente"]
-                        short_name = guest[:18] if len(guest) > 18 else guest
-                        label = f"🔴 {table_name}"
+                        short_name = guest[:18] + "..." if len(guest) > 18 else guest
+                        label = f"🔴 {table_name}\n{short_name}"
                     else:
-                        label = f"🟢 {table_name}"
+                        label = f"🟢 {table_name}\nDisponibile"
 
                     btn_type = "primary" if is_occupied else "secondary"
                     if st.button(
@@ -761,14 +762,6 @@ def render_table_map(date_df, selected_slot):
                         st.session_state.selected_table = table_name
                         st.session_state.show_modal = True
                         st.rerun()
-
-                    if is_occupied:
-                        st.markdown(
-                            f'<div class="table-name">{short_name}<br><span style="font-size:0.62rem;color:#9fb3c8;">{reservation["fascia"]}</span></div>',
-                            unsafe_allow_html=True,
-                        )
-                    else:
-                        st.markdown('<div class="table-name">&nbsp;</div>', unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -963,16 +956,18 @@ def main_dashboard():
     render_sidebar_map()
     render_header()
 
-    # Toolbar
-    col_user, col_date, col_slot, col_actions = st.columns([2, 2, 2, 1.5])
+    st.markdown('<div class="calendar-bar">', unsafe_allow_html=True)
+    col_user, col_date, col_slot, col_actions = st.columns([2, 2.2, 2, 1.7])
     with col_user:
         role_icon = "👑" if st.session_state.role == "admin" else "👁️"
-        st.markdown(f"**{role_icon} {st.session_state.username.capitalize()}**")
+        st.markdown(f"**{role_icon} {st.session_state.username.capitalize()}**  ")
+        st.caption("Portale prenotazioni: consulta, inserisci, modifica o cancella")
     with col_date:
-        selected_date = st.date_input("Data", value=date.today(),
+        selected_date = st.date_input("Calendario prenotazioni", value=date.today(),
                                        format="DD/MM/YYYY", key="filter_date")
     with col_slot:
-        selected_slot = st.selectbox("Fascia", TIME_SLOTS, key="filter_slot")
+        selected_slot = st.selectbox("Fascia oraria", TIME_SLOTS, key="filter_slot")
+        st.caption("Seleziona giornata e fascia da visualizzare")
     with col_actions:
         ac1, ac2, ac3 = st.columns(3)
         with ac1:
@@ -988,6 +983,7 @@ def main_dashboard():
         with ac3:
             if st.button("🚪", use_container_width=True, help="Logout"):
                 logout()
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Dati
     df = load_reservations()
@@ -1003,7 +999,7 @@ def main_dashboard():
         st.divider()
 
     # Mappa tavoli interattiva
-    st.caption("👇 Clicca un tavolo per prenotare o gestire. Se occupato, sotto compare il nome della prenotazione.")
+    st.caption("👇 Clicca un tavolo per prenotare o gestire. Nome tavolo e prenotazione sono mostrati nello stesso riquadro.")
     render_table_map(date_df, selected_slot)
 
     # DB completo (admin)
