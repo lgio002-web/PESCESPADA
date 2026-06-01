@@ -440,6 +440,20 @@ def inject_custom_css():
             color: white;
         }
 
+        .zone-card {
+            background: #202020;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 0.85rem 0.95rem 1rem 0.95rem;
+            margin: 0.7rem 0 1rem 0;
+        }
+
+        .zone-subtitle {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            margin: 0.15rem 0 0.35rem 0;
+        }
+
         /* Login */
         .login-box {
             text-align: center;
@@ -455,15 +469,15 @@ def inject_custom_css():
         .stButton > button {
             border-radius: 8px !important;
             font-weight: 600 !important;
-            font-size: 0.78rem !important;
-            min-height: 94px !important;
+            font-size: 0.8rem !important;
+            min-height: 88px !important;
             white-space: pre-wrap !important;
             line-height: 1.3 !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
-            padding: 0.5rem 0.4rem !important;
+            padding: 0.7rem 0.55rem !important;
         }
 
         .map-panel {
@@ -670,6 +684,16 @@ def _build_table_button_label(table_name, reservation):
     return f"🔴 {table_name}\n{short_name}{birthday_icon}\n{people} persone"
 
 
+def _zone_columns_count(tables_count):
+    if tables_count <= 4:
+        return 4
+    if tables_count <= 6:
+        return 3
+    if tables_count <= 9:
+        return 4
+    return 5
+
+
 def build_occupied_map(date_df, selected_slot):
     occupied_map = {}
     for table_name in ALL_TABLES:
@@ -788,7 +812,7 @@ def build_sidebar_floor_plan_svg(date_df, selected_slot):
 def _render_svg_image(svg_markup):
     svg_base64 = base64.b64encode(svg_markup.encode("utf-8")).decode("ascii")
     st.markdown(
-        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="width:100%; max-width:1600px; height:auto; display:block; margin:0 auto;" />',
+        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="width:100%; max-width:1600px; max-height:calc(100vh - 185px); height:auto; display:block; margin:0 auto; object-fit:contain;" />',
         unsafe_allow_html=True,
     )
 
@@ -931,43 +955,47 @@ def render_table_map(date_df, selected_slot):
         color = zone_data["color"]
         icon = zone_data["icon"]
         tables = zone_data["tables"]
+        zone_occupied = sum(1 for table_name in tables if table_name in occupied_map)
+        zone_free = len(tables) - zone_occupied
 
-        st.markdown(
-            f'<div class="zone-header" style="background:{color};">'
-            f'{icon} {zone_name} &mdash; {len(tables)} tavoli</div>',
-            unsafe_allow_html=True
-        )
+        with st.container(border=True):
+            st.markdown(
+                f'<div class="zone-header" style="background:{color};">'
+                f'{icon} {zone_name} &mdash; {len(tables)} tavoli</div>'
+                f'<div class="zone-subtitle">Occupati: {zone_occupied} · Liberi: {zone_free} · Fascia: {selected_slot}</div>',
+                unsafe_allow_html=True
+            )
 
-        cols_per_row = 5 if len(tables) <= 6 else 6
-        rows_needed = (len(tables) + cols_per_row - 1) // cols_per_row
+            cols_per_row = _zone_columns_count(len(tables))
+            rows_needed = (len(tables) + cols_per_row - 1) // cols_per_row
 
-        for row_idx in range(rows_needed):
-            cols = st.columns(cols_per_row)
-            for col_idx in range(cols_per_row):
-                table_idx = row_idx * cols_per_row + col_idx
-                if table_idx >= len(tables):
-                    break
-                table_name = tables[table_idx]  # sempre stringa dal dict ZONES
-                reservation = occupied_map.get(table_name)
-                is_occupied = reservation is not None
+            for row_idx in range(rows_needed):
+                cols = st.columns(cols_per_row, gap="medium")
+                for col_idx in range(cols_per_row):
+                    table_idx = row_idx * cols_per_row + col_idx
+                    if table_idx >= len(tables):
+                        break
+                    table_name = tables[table_idx]  # sempre stringa dal dict ZONES
+                    reservation = occupied_map.get(table_name)
+                    is_occupied = reservation is not None
 
-                with cols[col_idx]:
-                    label = _build_table_button_label(table_name, reservation)
+                    with cols[col_idx]:
+                        label = _build_table_button_label(table_name, reservation)
 
-                    btn_type = "primary" if is_occupied else "secondary"
-                    if st.button(
-                        label,
-                        key=f"tbl_{zone_name}_{table_name}",
-                        use_container_width=True,
-                        type=btn_type,
-                        help=(
-                            f"Prenotato: {reservation['cliente']} · {reservation['fascia']}"
-                            if is_occupied else f"Tavolo {table_name} — libero"
-                        ),
-                    ):
-                        st.session_state.selected_table = table_name
-                        st.session_state.show_modal = True
-                        st.rerun()
+                        btn_type = "primary" if is_occupied else "secondary"
+                        if st.button(
+                            label,
+                            key=f"tbl_{zone_name}_{table_name}",
+                            use_container_width=True,
+                            type=btn_type,
+                            help=(
+                                f"Prenotato: {reservation['cliente']} · {reservation['fascia']}"
+                                if is_occupied else f"Tavolo {table_name} — libero"
+                            ),
+                        ):
+                            st.session_state.selected_table = table_name
+                            st.session_state.show_modal = True
+                            st.rerun()
 
 
 # ─────────────────────────────────────────────────────────────
@@ -1199,7 +1227,7 @@ def render_sidebar_map(date_df, selected_slot):
                 st.session_state.sidebar_visible = False
                 st.rerun()
 
-        st.caption(f"{selected_slot} · mappa ingrandita con tutti i tavoli visibili")
+        st.caption(f"{selected_slot} · vista completa senza scroll della dashboard")
         _render_svg_image(build_sidebar_floor_plan_svg(date_df, selected_slot))
         st.divider()
 
@@ -1208,7 +1236,8 @@ def render_sidebar_map(date_df, selected_slot):
 # DASHBOARD
 # ─────────────────────────────────────────────────────────────
 def main_dashboard():
-    render_header()
+    if not st.session_state.sidebar_visible:
+        render_header()
 
     with st.container(border=True):
         col_user, col_date, col_slot, col_actions = st.columns([2, 2.2, 2, 1.7])
@@ -1244,6 +1273,9 @@ def main_dashboard():
     date_df = get_reservations_for_date(df, selected_date_str)
 
     render_sidebar_map(date_df, selected_slot)
+
+    if st.session_state.sidebar_visible:
+        return
 
     render_stats(date_df)
 
