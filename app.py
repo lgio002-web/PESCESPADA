@@ -361,6 +361,8 @@ FLOOR_PLAN_SVG = ASSET_FLOOR_PLAN_SVG
 # CSS
 # ─────────────────────────────────────────────────────────────
 def inject_custom_css():
+    map_fullscreen = st.session_state.get("sidebar_visible", False)
+    block_padding = "0.2rem 0.35rem 0.35rem 0.35rem" if map_fullscreen else "1rem 2rem"
     st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -389,7 +391,7 @@ def inject_custom_css():
         header {visibility: hidden;}
 
         .block-container {
-            padding: 1rem 2rem !important;
+            padding: BLOCK_PADDING !important;
             max-width: 100% !important;
         }
 
@@ -480,16 +482,22 @@ def inject_custom_css():
             padding: 0.7rem 0.55rem !important;
         }
 
-        .map-panel {
-            background: #151515;
-            border: 1px solid rgba(197, 165, 90, 0.18);
-            border-radius: 18px;
-            padding: 1rem 1rem 1.2rem 1rem;
-            margin-bottom: 1rem;
+        .map-shell {
+            height: calc(100vh - 0.55rem);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .map-shell {
-            min-height: calc(100vh - 1.2rem);
+        .map-toolbar-spacer {
+            min-height: 0.2rem;
+        }
+
+        .map-canvas {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .map-panel-title {
@@ -553,10 +561,6 @@ def inject_custom_css():
                 padding: 0.65rem 0.75rem 0.9rem 0.75rem !important;
             }
 
-            .map-panel {
-                padding: 0.8rem 0.8rem 0.95rem 0.8rem;
-            }
-
             .map-panel-title {
                 font-size: 0.92rem;
             }
@@ -573,7 +577,7 @@ def inject_custom_css():
             }
         }
     </style>
-    """, unsafe_allow_html=True)
+    """.replace("BLOCK_PADDING", block_padding), unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -868,10 +872,15 @@ def build_sidebar_floor_plan_svg(date_df, selected_slot):
     return "\n".join(svg_parts)
 
 
-def _render_svg_image(svg_markup):
+def _render_svg_image(svg_markup, fullscreen=False):
     svg_base64 = base64.b64encode(svg_markup.encode("utf-8")).decode("ascii")
+    image_style = (
+        "width:100%; max-width:1600px; max-height:calc(100vh - 54px); height:100%; display:block; margin:0 auto; object-fit:contain;"
+        if fullscreen else
+        "width:100%; max-width:1600px; max-height:calc(100vh - 120px); height:auto; display:block; margin:0 auto; object-fit:contain;"
+    )
     st.markdown(
-        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="width:100%; max-width:1600px; max-height:calc(100vh - 120px); height:auto; display:block; margin:0 auto; object-fit:contain;" />',
+        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="{image_style}" />',
         unsafe_allow_html=True,
     )
 
@@ -1270,27 +1279,20 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
 def render_sidebar_map(date_df, selected_slot):
     if not st.session_state.sidebar_visible:
         return
-    with st.container(border=True):
+    with st.container():
         st.markdown('<div class="map-shell">', unsafe_allow_html=True)
-        header_col, close_col = st.columns([12, 1])
-        with header_col:
-            st.markdown("""
-            <div class="map-panel">
-                <div class="map-panel-title">🗺️ Mappa sala</div>
-                <div class="map-panel-subtitle">Disponibilita' a colpo d'occhio · Summer 2026</div>
-                <div class="map-panel-note">Vista estesa della sala per valutare subito occupazione e capienza tavoli</div>
-            </div>
-            """, unsafe_allow_html=True)
+        close_spacer, close_col = st.columns([15, 1])
+        with close_spacer:
+            st.markdown('<div class="map-toolbar-spacer"></div>', unsafe_allow_html=True)
         with close_col:
             st.write("")
             if st.button("✕", key="close_map_panel", use_container_width=True, help="Chiudi mappa"):
                 st.session_state.sidebar_visible = False
                 st.rerun()
-
-        st.caption(f"{selected_slot} · vista completa senza scroll della dashboard")
-        _render_svg_image(build_sidebar_floor_plan_svg(date_df, selected_slot))
+        st.markdown('<div class="map-canvas">', unsafe_allow_html=True)
+        _render_svg_image(build_sidebar_floor_plan_svg(date_df, selected_slot), fullscreen=True)
         st.markdown('</div>', unsafe_allow_html=True)
-        st.divider()
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
