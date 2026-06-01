@@ -488,6 +488,10 @@ def inject_custom_css():
             margin-bottom: 1rem;
         }
 
+        .map-shell {
+            min-height: calc(100vh - 1.2rem);
+        }
+
         .map-panel-title {
             color: #C5A55A;
             font-weight: 700;
@@ -515,6 +519,59 @@ def inject_custom_css():
             padding: 0.8rem 1rem;
             margin-bottom: 0.8rem;
         }
+
+        @media (max-width: 1024px) {
+            .block-container {
+                padding: 0.8rem 1rem 1rem 1rem !important;
+            }
+
+            .zone-card {
+                padding: 1rem 1rem 1.15rem 1rem;
+                border-radius: 18px;
+            }
+
+            .zone-header {
+                font-size: 0.82rem;
+                padding: 7px 16px;
+            }
+
+            .zone-subtitle {
+                font-size: 0.84rem;
+                margin: 0.35rem 0 0.55rem 0;
+            }
+
+            .stButton > button {
+                min-height: 110px !important;
+                font-size: 0.92rem !important;
+                padding: 0.9rem 0.75rem !important;
+                border-radius: 12px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .block-container {
+                padding: 0.65rem 0.75rem 0.9rem 0.75rem !important;
+            }
+
+            .map-panel {
+                padding: 0.8rem 0.8rem 0.95rem 0.8rem;
+            }
+
+            .map-panel-title {
+                font-size: 0.92rem;
+            }
+
+            .map-panel-subtitle,
+            .map-panel-note {
+                font-size: 0.78rem;
+            }
+
+            .stButton > button {
+                min-height: 122px !important;
+                font-size: 0.98rem !important;
+                line-height: 1.35 !important;
+            }
+        }
     </style>
     """, unsafe_allow_html=True)
 
@@ -530,6 +587,8 @@ def init_session_state():
         "selected_table": None,
         "show_modal": False,
         "sidebar_visible": False,
+        "filter_date": date.today(),
+        "filter_slot": TIME_SLOTS[0],
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -686,12 +745,12 @@ def _build_table_button_label(table_name, reservation):
 
 def _zone_columns_count(tables_count):
     if tables_count <= 4:
-        return 4
+        return 2
     if tables_count <= 6:
         return 3
     if tables_count <= 9:
-        return 4
-    return 5
+        return 3
+    return 4
 
 
 def build_occupied_map(date_df, selected_slot):
@@ -812,7 +871,7 @@ def build_sidebar_floor_plan_svg(date_df, selected_slot):
 def _render_svg_image(svg_markup):
     svg_base64 = base64.b64encode(svg_markup.encode("utf-8")).decode("ascii")
     st.markdown(
-        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="width:100%; max-width:1600px; max-height:calc(100vh - 185px); height:auto; display:block; margin:0 auto; object-fit:contain;" />',
+        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="width:100%; max-width:1600px; max-height:calc(100vh - 120px); height:auto; display:block; margin:0 auto; object-fit:contain;" />',
         unsafe_allow_html=True,
     )
 
@@ -1212,6 +1271,7 @@ def render_sidebar_map(date_df, selected_slot):
     if not st.session_state.sidebar_visible:
         return
     with st.container(border=True):
+        st.markdown('<div class="map-shell">', unsafe_allow_html=True)
         header_col, close_col = st.columns([12, 1])
         with header_col:
             st.markdown("""
@@ -1229,6 +1289,7 @@ def render_sidebar_map(date_df, selected_slot):
 
         st.caption(f"{selected_slot} · vista completa senza scroll della dashboard")
         _render_svg_image(build_sidebar_floor_plan_svg(date_df, selected_slot))
+        st.markdown('</div>', unsafe_allow_html=True)
         st.divider()
 
 
@@ -1239,33 +1300,39 @@ def main_dashboard():
     if not st.session_state.sidebar_visible:
         render_header()
 
-    with st.container(border=True):
-        col_user, col_date, col_slot, col_actions = st.columns([2, 2.2, 2, 1.7])
-        with col_user:
-            role_icon = "👑" if st.session_state.role == "admin" else "👁️"
-            st.markdown(f"**{role_icon} {st.session_state.username.capitalize()}**  ")
-            st.caption("Portale prenotazioni: consulta, inserisci, modifica o cancella")
-        with col_date:
-            selected_date = st.date_input("Calendario prenotazioni", value=date.today(),
-                                           format="DD/MM/YYYY", key="filter_date")
-        with col_slot:
-            selected_slot = st.selectbox("Fascia oraria", TIME_SLOTS, key="filter_slot")
-            st.caption("Seleziona giornata e fascia da visualizzare")
-        with col_actions:
-            ac1, ac2, ac3 = st.columns(3)
-            with ac1:
-                map_icon = "🗺️"
-                map_help = "Apri o chiudi la mappa estesa"
-                if st.button(map_icon, use_container_width=True, help=map_help):
-                    st.session_state.sidebar_visible = not st.session_state.sidebar_visible
-                    st.rerun()
-            with ac2:
-                if st.button("🔄", use_container_width=True, help="Aggiorna dati"):
-                    load_reservations.clear()
-                    st.rerun()
-            with ac3:
-                if st.button("🚪", use_container_width=True, help="Logout"):
-                    logout()
+    if not st.session_state.sidebar_visible:
+        with st.container(border=True):
+            col_user, col_date, col_slot, col_actions = st.columns([2, 2.2, 2, 1.7])
+            with col_user:
+                role_icon = "👑" if st.session_state.role == "admin" else "👁️"
+                st.markdown(f"**{role_icon} {st.session_state.username.capitalize()}**  ")
+                st.caption("Portale prenotazioni: consulta, inserisci, modifica o cancella")
+            with col_date:
+                selected_date = st.date_input(
+                    "Calendario prenotazioni",
+                    value=st.session_state.filter_date,
+                    format="DD/MM/YYYY",
+                    key="filter_date",
+                )
+            with col_slot:
+                selected_slot = st.selectbox("Fascia oraria", TIME_SLOTS, key="filter_slot")
+                st.caption("Seleziona giornata e fascia da visualizzare")
+            with col_actions:
+                ac1, ac2, ac3 = st.columns(3)
+                with ac1:
+                    if st.button("🗺️", use_container_width=True, help="Apri mappa a schermo pieno"):
+                        st.session_state.sidebar_visible = True
+                        st.rerun()
+                with ac2:
+                    if st.button("🔄", use_container_width=True, help="Aggiorna dati"):
+                        load_reservations.clear()
+                        st.rerun()
+                with ac3:
+                    if st.button("🚪", use_container_width=True, help="Logout"):
+                        logout()
+    else:
+        selected_date = st.session_state.filter_date
+        selected_slot = st.session_state.filter_slot
 
     # Dati
     df = load_reservations()
