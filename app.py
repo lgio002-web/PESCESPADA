@@ -93,25 +93,25 @@ SIDEBAR_TABLE_LAYOUTS = {
     "1": {"shape": "rect", "x": 96, "y": 320, "w": 38, "h": 28},
     "10": {"shape": "rect", "x": 140, "y": 335, "w": 38, "h": 24},
     "11": {"shape": "rect", "x": 218, "y": 320, "w": 46, "h": 32},
-    "V2": {"shape": "rect", "x": 302, "y": 172, "w": 42, "h": 24},
-    "15": {"shape": "rect", "x": 302, "y": 250, "w": 42, "h": 28},
-    "V1": {"shape": "rect", "x": 290, "y": 325, "w": 50, "h": 24},
-    "A2": {"shape": "circle", "cx": 370, "cy": 370, "r": 12},
-    "A1": {"shape": "circle", "cx": 410, "cy": 370, "r": 12},
-    "P4": {"shape": "path", "d": "M302 475 Q318 465 334 475 Q350 465 366 475 L366 492 Q350 482 334 492 Q318 482 302 492 Z", "cx": 334, "cy": 481},
-    "P1": {"shape": "path", "d": "M372 475 Q388 465 404 475 Q420 465 436 475 L436 492 Q420 482 404 492 Q388 482 372 492 Z", "cx": 404, "cy": 481},
-    "P9": {"shape": "path", "d": "M288 508 Q304 498 320 508 Q336 498 352 508 L352 525 Q336 515 320 525 Q304 515 288 525 Z", "cx": 320, "cy": 514},
-    "P7": {"shape": "path", "d": "M356 508 Q372 498 388 508 Q404 498 420 508 L420 525 Q404 515 388 525 Q372 515 356 525 Z", "cx": 388, "cy": 514},
-    "P5": {"shape": "path", "d": "M424 508 Q440 498 456 508 Q472 498 488 508 L488 525 Q472 515 456 525 Q440 515 424 525 Z", "cx": 456, "cy": 514},
-    "P2": {"shape": "path", "d": "M492 508 Q508 498 524 508 Q540 498 556 508 L556 525 Q540 515 524 525 Q508 515 492 525 Z", "cx": 524, "cy": 514},
-    "P10": {"shape": "path", "d": "M288 541 Q304 531 320 541 Q336 531 352 541 L352 558 Q336 548 320 558 Q304 548 288 558 Z", "cx": 320, "cy": 547},
-    "P8": {"shape": "path", "d": "M356 541 Q372 531 388 541 Q404 531 420 541 L420 558 Q404 548 388 558 Q372 548 356 558 Z", "cx": 388, "cy": 547},
-    "P6": {"shape": "path", "d": "M424 541 Q440 531 456 541 Q472 531 488 541 L488 558 Q472 548 456 558 Q440 548 424 558 Z", "cx": 456, "cy": 547},
-    "P3": {"shape": "path", "d": "M492 541 Q508 531 524 541 Q540 531 556 541 L556 558 Q540 548 524 558 Q508 548 492 558 Z", "cx": 524, "cy": 547},
-    "D4": {"shape": "rect", "x": 18, "y": 575, "w": 56, "h": 24},
-    "D3": {"shape": "rect", "x": 164, "y": 575, "w": 56, "h": 24},
-    "D2": {"shape": "rect", "x": 230, "y": 575, "w": 56, "h": 24},
-    "D1": {"shape": "rect", "x": 296, "y": 575, "w": 56, "h": 24},
+    "V2": {"shape": "rect", "x": 372, "y": 172, "w": 42, "h": 24},
+    "15": {"shape": "rect", "x": 372, "y": 250, "w": 42, "h": 28},
+    "V1": {"shape": "rect", "x": 366, "y": 325, "w": 50, "h": 24},
+    "A2": {"shape": "circle", "cx": 438, "cy": 370, "r": 12},
+    "A1": {"shape": "circle", "cx": 470, "cy": 370, "r": 12},
+    "P4": {"shape": "path", "d": "M387 472 Q397 464 407 472 Q417 464 427 472 L427 489 Q417 481 407 489 Q397 481 387 489 Z", "cx": 407, "cy": 478},
+    "P1": {"shape": "path", "d": "M463 472 Q473 464 483 472 Q493 464 503 472 L503 489 Q493 481 483 489 Q473 481 463 489 Z", "cx": 483, "cy": 478},
+    "P9": {"shape": "path", "d": "M367 507 Q377 499 387 507 Q397 499 407 507 L407 524 Q397 516 387 524 Q377 516 367 524 Z", "cx": 387, "cy": 513},
+    "P7": {"shape": "path", "d": "M408 507 Q418 499 428 507 Q438 499 448 507 L448 524 Q438 516 428 524 Q418 516 408 524 Z", "cx": 428, "cy": 513},
+    "P5": {"shape": "path", "d": "M449 507 Q459 499 469 507 Q479 499 489 507 L489 524 Q479 516 469 524 Q459 516 449 524 Z", "cx": 469, "cy": 513},
+    "P2": {"shape": "path", "d": "M490 507 Q500 499 510 507 Q520 499 530 507 L530 524 Q520 516 510 524 Q500 516 490 524 Z", "cx": 510, "cy": 513},
+    "P10": {"shape": "path", "d": "M367 540 Q377 532 387 540 Q397 532 407 540 L407 557 Q397 549 387 557 Q377 549 367 557 Z", "cx": 387, "cy": 546},
+    "P8": {"shape": "path", "d": "M408 540 Q418 532 428 540 Q438 532 448 540 L448 557 Q438 549 428 557 Q418 549 408 557 Z", "cx": 428, "cy": 546},
+    "P6": {"shape": "path", "d": "M449 540 Q459 532 469 540 Q479 532 489 540 L489 557 Q479 549 469 557 Q459 549 449 557 Z", "cx": 469, "cy": 546},
+    "P3": {"shape": "path", "d": "M490 540 Q500 532 510 540 Q520 532 530 540 L530 557 Q520 549 510 557 Q500 549 490 557 Z", "cx": 510, "cy": 546},
+    "D4": {"shape": "rect", "x": 22, "y": 552, "w": 70, "h": 24},
+    "D3": {"shape": "rect", "x": 128, "y": 552, "w": 70, "h": 24},
+    "D2": {"shape": "rect", "x": 204, "y": 552, "w": 70, "h": 24},
+    "D1": {"shape": "rect", "x": 280, "y": 552, "w": 70, "h": 24},
 }
 
 TIME_SLOTS = ["Pranzo", "Aperitivo", "Night"]
@@ -361,9 +361,6 @@ FLOOR_PLAN_SVG = ASSET_FLOOR_PLAN_SVG
 # CSS
 # ─────────────────────────────────────────────────────────────
 def inject_custom_css():
-    sidebar_visible = st.session_state.get("sidebar_visible", False)
-    sidebar_transform = "translateX(0)" if sidebar_visible else "translateX(-100%)"
-    sidebar_opacity = "1" if sidebar_visible else "0"
     st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -393,7 +390,7 @@ def inject_custom_css():
 
         .block-container {
             padding: 1rem 2rem !important;
-            max-width: 1400px;
+            max-width: 100% !important;
         }
 
         /* Brand Header */
@@ -469,22 +466,32 @@ def inject_custom_css():
             padding: 0.5rem 0.4rem !important;
         }
 
-        /* Sidebar */
-        section[data-testid="stSidebar"] {
-            background: #141414 !important;
-            border-right: 1px solid rgba(197, 165, 90, 0.15);
-            min-width: 560px !important;
-            max-width: 560px !important;
-            transform: SIDEBAR_TRANSFORM !important;
-            opacity: SIDEBAR_OPACITY !important;
-            transition: transform 0.18s ease, opacity 0.18s ease !important;
+        .map-panel {
+            background: #151515;
+            border: 1px solid rgba(197, 165, 90, 0.18);
+            border-radius: 18px;
+            padding: 1rem 1rem 1.2rem 1rem;
+            margin-bottom: 1rem;
         }
-        section[data-testid="stSidebar"] .block-container {
-            padding: 0.8rem 0.8rem 1rem 0.8rem !important;
+
+        .map-panel-title {
+            color: #C5A55A;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-        button[kind="header"] {
-            opacity: 0 !important;
-            pointer-events: none !important;
+
+        .map-panel-subtitle {
+            color: #8B8B8B;
+            font-size: 0.76rem;
+            margin-top: 0.15rem;
+        }
+
+        .map-panel-note {
+            color: #BEB4A1;
+            font-size: 0.78rem;
+            margin-top: 0.35rem;
         }
 
         .calendar-bar {
@@ -495,7 +502,7 @@ def inject_custom_css():
             margin-bottom: 0.8rem;
         }
     </style>
-    """.replace("SIDEBAR_TRANSFORM", sidebar_transform).replace("SIDEBAR_OPACITY", sidebar_opacity), unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -693,38 +700,39 @@ def build_sidebar_floor_plan_svg(date_df, selected_slot):
     occupied_map = build_occupied_map(date_df, selected_slot)
     svg_parts = [
         """
-<svg viewBox="0 0 460 640" xmlns="http://www.w3.org/2000/svg"
+<svg viewBox="0 0 560 620" xmlns="http://www.w3.org/2000/svg"
      style="width:100%; height:auto; background:#fffdf8; border-radius:10px; border:1px solid #d7cfbf;">
-  <rect x="0" y="0" width="460" height="640" rx="10" fill="#fffdf8"/>
-  <text x="230" y="20" text-anchor="middle" font-family="Arial,sans-serif" font-size="11"
+  <rect x="0" y="0" width="560" height="620" rx="10" fill="#fffdf8"/>
+  <text x="280" y="22" text-anchor="middle" font-family="Arial,sans-serif" font-size="13"
         fill="#7b6138" font-weight="700" letter-spacing="1">MAPPA DISPONIBILITA'</text>
-  <text x="230" y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="8"
+  <text x="280" y="39" text-anchor="middle" font-family="Arial,sans-serif" font-size="9"
         fill="#6f6f6f">Tavolo · Cliente · Persone · Compleanno</text>
 
-  <rect x="80" y="160" width="200" height="310" rx="5" fill="#fbf7ef" stroke="#d8c7a9" stroke-width="1.6"/>
-  <rect x="110" y="150" width="42" height="16" rx="3" fill="#c5975b"/>
-  <text x="131" y="162" text-anchor="middle" font-size="8" fill="white" font-weight="700">SALA</text>
+  <rect x="86" y="156" width="206" height="300" rx="5" fill="#fbf7ef" stroke="#d8c7a9" stroke-width="1.6"/>
+  <rect x="118" y="146" width="44" height="16" rx="3" fill="#c5975b"/>
+  <text x="140" y="158" text-anchor="middle" font-size="8" fill="white" font-weight="700">SALA</text>
 
-  <rect x="290" y="160" width="130" height="250" rx="5" fill="#f2f8f4" stroke="#b9d1ba" stroke-width="1.5"/>
-  <rect x="330" y="218" width="60" height="16" rx="3" fill="#5b8c5a"/>
-  <text x="360" y="230" text-anchor="middle" font-size="7" fill="white" font-weight="700">VERANDA</text>
+  <rect x="360" y="156" width="122" height="250" rx="5" fill="#f2f8f4" stroke="#b9d1ba" stroke-width="1.5"/>
+  <rect x="389" y="218" width="64" height="16" rx="3" fill="#5b8c5a"/>
+  <text x="421" y="230" text-anchor="middle" font-size="7" fill="white" font-weight="700">VERANDA</text>
 
-  <rect x="290" y="455" width="150" height="120" rx="5" fill="#fff6ec" stroke="#efc28d" stroke-width="1.5"/>
-  <rect x="336" y="443" width="58" height="16" rx="3" fill="#d4883e"/>
-  <text x="365" y="454" text-anchor="middle" font-size="7" fill="white" font-weight="700">PATIO</text>
+  <rect x="360" y="450" width="170" height="110" rx="5" fill="#fff6ec" stroke="#efc28d" stroke-width="1.5"/>
+  <rect x="417" y="436" width="58" height="16" rx="3" fill="#d4883e"/>
+  <text x="446" y="447" text-anchor="middle" font-size="7" fill="white" font-weight="700">PATIO</text>
 
-  <rect x="82" y="565" width="206" height="34" rx="5" fill="#f9f0f0" stroke="#ddbaba" stroke-width="1.5"/>
-  <text x="185" y="586" text-anchor="middle" font-size="12" fill="#a63d3d" font-weight="700">TIKI BAR</text>
+  <rect x="18" y="535" width="334" height="62" rx="7" fill="#f9f0f0" stroke="#ddbaba" stroke-width="1.5"/>
+  <rect x="136" y="520" width="98" height="18" rx="4" fill="#a63d3d"/>
+  <text x="185" y="533" text-anchor="middle" font-size="9" fill="white" font-weight="700">TIKI BAR</text>
 
   <text x="42" y="150" font-size="7" fill="#4caf50" font-weight="700">BEACH</text>
   <polygon points="10,148 40,142 40,154" fill="none" stroke="#4caf50" stroke-width="1"/>
-  <text x="405" y="148" font-size="7" fill="#e53935" font-weight="700">EXIT</text>
-  <polygon points="435,148 450,142 450,154" fill="none" stroke="#e53935" stroke-width="1"/>
+  <text x="492" y="148" font-size="7" fill="#e53935" font-weight="700">EXIT</text>
+  <polygon points="522,148 548,142 548,154" fill="none" stroke="#e53935" stroke-width="1"/>
 
-  <rect x="16" y="608" width="16" height="16" rx="4" fill="#e8fff1" stroke="#169b62" stroke-width="1.8"/>
-  <text x="40" y="620" font-size="9" fill="#2d4c3d" font-weight="700">Libero</text>
-  <rect x="102" y="608" width="16" height="16" rx="4" fill="#ffe6e2" stroke="#d83f3f" stroke-width="1.8"/>
-  <text x="126" y="620" font-size="9" fill="#6c2d2d" font-weight="700">Occupato</text>
+  <rect x="18" y="598" width="16" height="16" rx="4" fill="#e8fff1" stroke="#169b62" stroke-width="1.8"/>
+  <text x="42" y="610" font-size="9" fill="#2d4c3d" font-weight="700">Libero</text>
+  <rect x="110" y="598" width="16" height="16" rx="4" fill="#ffe6e2" stroke="#d83f3f" stroke-width="1.8"/>
+  <text x="134" y="610" font-size="9" fill="#6c2d2d" font-weight="700">Occupato</text>
 """
     ]
 
@@ -780,7 +788,7 @@ def build_sidebar_floor_plan_svg(date_df, selected_slot):
 def _render_svg_image(svg_markup):
     svg_base64 = base64.b64encode(svg_markup.encode("utf-8")).decode("ascii")
     st.markdown(
-        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="width:100%; height:auto; display:block;" />',
+        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="width:100%; max-width:1600px; height:auto; display:block; margin:0 auto;" />',
         unsafe_allow_html=True,
     )
 
@@ -1175,18 +1183,25 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
 def render_sidebar_map(date_df, selected_slot):
     if not st.session_state.sidebar_visible:
         return
-    with st.sidebar:
-        st.markdown("""
-        <div style="text-align:center; margin-bottom:12px; padding-top:8px;">
-            <span style="color:#C5A55A; font-weight:700; font-size:0.95rem;
-                         letter-spacing:1px;">🗺️ MAPPA SALA</span>
-            <div style="color:#8B8B8B; font-size:0.65rem; margin-top:3px;">
-                Disponibilita' a colpo d'occhio · Summer 2026
+    with st.container(border=True):
+        header_col, close_col = st.columns([12, 1])
+        with header_col:
+            st.markdown("""
+            <div class="map-panel">
+                <div class="map-panel-title">🗺️ Mappa sala</div>
+                <div class="map-panel-subtitle">Disponibilita' a colpo d'occhio · Summer 2026</div>
+                <div class="map-panel-note">Vista estesa della sala per valutare subito occupazione e capienza tavoli</div>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-        st.caption(f"{selected_slot} · colori netti tra libero e occupato")
+            """, unsafe_allow_html=True)
+        with close_col:
+            st.write("")
+            if st.button("✕", key="close_map_panel", use_container_width=True, help="Chiudi mappa"):
+                st.session_state.sidebar_visible = False
+                st.rerun()
+
+        st.caption(f"{selected_slot} · mappa ingrandita con tutti i tavoli visibili")
         _render_svg_image(build_sidebar_floor_plan_svg(date_df, selected_slot))
+        st.divider()
 
 
 # ─────────────────────────────────────────────────────────────
@@ -1210,8 +1225,8 @@ def main_dashboard():
         with col_actions:
             ac1, ac2, ac3 = st.columns(3)
             with ac1:
-                map_icon = "❌" if st.session_state.sidebar_visible else "🗺️"
-                map_help = "Chiudi mappa sala" if st.session_state.sidebar_visible else "Apri mappa sala"
+                map_icon = "🗺️"
+                map_help = "Apri o chiudi la mappa estesa"
                 if st.button(map_icon, use_container_width=True, help=map_help):
                     st.session_state.sidebar_visible = not st.session_state.sidebar_visible
                     st.rerun()
