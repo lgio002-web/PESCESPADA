@@ -76,7 +76,8 @@ USERS = {
 
 SHEET_COLUMNS = [
     "ID", "Tavolo", "Cliente", "Data", "Fascia_Oraria",
-    "Fonte_Prenotazione", "Creato_Da", "Data_Creazione", "Ultima_Modifica"
+    "Fonte_Prenotazione", "Telefono", "Numero_Persone", "Compleanno",
+    "Creato_Da", "Data_Creazione", "Ultima_Modifica"
 ]
 
 LOGO_FILE = Path(__file__).with_name("logo_pescespada.jpg")
@@ -408,13 +409,14 @@ def inject_custom_css():
             border-radius: 8px !important;
             font-weight: 600 !important;
             font-size: 0.78rem !important;
-            min-height: 82px !important;
+            min-height: 94px !important;
             white-space: pre-wrap !important;
             line-height: 1.3 !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
+            padding: 0.5rem 0.4rem !important;
         }
 
         /* Sidebar */
@@ -548,6 +550,9 @@ def _read_sheet_fresh():
         df["Fascia_Oraria"] = df["Fascia_Oraria"].astype(str).str.strip()
         df["Cliente"] = df["Cliente"].astype(str).str.strip()
         df["ID"] = df["ID"].astype(str).str.strip()
+        df["Telefono"] = df["Telefono"].astype(str).replace({"nan": ""}).str.strip()
+        df["Numero_Persone"] = df["Numero_Persone"].astype(str).replace({"nan": ""}).str.strip()
+        df["Compleanno"] = df["Compleanno"].astype(str).replace({"nan": ""}).str.strip()
         return df
     except Exception as e:
         st.error(f"Errore lettura foglio: {e}")
@@ -577,7 +582,38 @@ def _write_sheet(df):
         return False
 
 
-def add_reservation(table, cliente, data_str, fascia, fonte):
+def _sanitize_optional_phone(phone_value):
+    if phone_value is None:
+        return ""
+    phone = str(phone_value).strip()
+    return "" if phone.lower() == "nan" else phone
+
+
+def _sanitize_optional_people(people_value):
+    if people_value is None:
+        return ""
+    people = str(people_value).strip()
+    if people.lower() == "nan":
+        return ""
+    return people if people.isdigit() else ""
+
+
+def _is_birthday_flag(value):
+    return str(value).strip().lower() in {"true", "1", "si", "sì", "yes", "y", "x"}
+
+
+def _build_table_button_label(table_name, reservation):
+    if reservation is None:
+        return f"🟢 {table_name}\nDisponibile\n"
+
+    guest = reservation["cliente"]
+    short_name = guest[:18] + "..." if len(guest) > 18 else guest
+    people = reservation["numero_persone"] or "-"
+    birthday_icon = " 🎂" if reservation["compleanno"] else ""
+    return f"🔴 {table_name}\n{short_name}{birthday_icon}\n{people} persone"
+
+
+def add_reservation(table, cliente, data_str, fascia, fonte, telefono="", numero_persone="", compleanno=False):
     df = _read_sheet_fresh()
     # Confronto come stringhe
     conflict = df[
@@ -598,6 +634,9 @@ def add_reservation(table, cliente, data_str, fascia, fonte):
         "Data": str(data_str),
         "Fascia_Oraria": str(fascia),
         "Fonte_Prenotazione": str(fonte),
+        "Telefono": _sanitize_optional_phone(telefono),
+        "Numero_Persone": _sanitize_optional_people(numero_persone),
+        "Compleanno": "TRUE" if compleanno else "FALSE",
         "Creato_Da": st.session_state.username,
         "Data_Creazione": now,
         "Ultima_Modifica": now,
@@ -606,7 +645,7 @@ def add_reservation(table, cliente, data_str, fascia, fonte):
     return _write_sheet(df)
 
 
-def update_reservation(res_id, table, cliente, data_str, fascia, fonte):
+def update_reservation(res_id, table, cliente, data_str, fascia, fonte, telefono="", numero_persone="", compleanno=False):
     df = _read_sheet_fresh()
     other = df[df["ID"] != str(res_id)]
     conflict = other[
@@ -625,6 +664,9 @@ def update_reservation(res_id, table, cliente, data_str, fascia, fonte):
     df.loc[mask, "Data"] = str(data_str)
     df.loc[mask, "Fascia_Oraria"] = str(fascia)
     df.loc[mask, "Fonte_Prenotazione"] = str(fonte)
+    df.loc[mask, "Telefono"] = _sanitize_optional_phone(telefono)
+    df.loc[mask, "Numero_Persone"] = _sanitize_optional_people(numero_persone)
+    df.loc[mask, "Compleanno"] = "TRUE" if compleanno else "FALSE"
     df.loc[mask, "Ultima_Modifica"] = now
     return _write_sheet(df)
 
@@ -710,6 +752,8 @@ def render_table_map(date_df, selected_slot):
             occupied_map[str(table_name)] = {
                 "cliente": str(reservation["Cliente"]),
                 "fascia": str(reservation["Fascia_Oraria"]),
+                "numero_persone": _sanitize_optional_people(reservation.get("Numero_Persone", "")),
+                "compleanno": _is_birthday_flag(reservation.get("Compleanno", "")),
             }
 
     for zone_name, zone_data in ZONES.items():
@@ -737,12 +781,7 @@ def render_table_map(date_df, selected_slot):
                 is_occupied = reservation is not None
 
                 with cols[col_idx]:
-                    if is_occupied:
-                        guest = reservation["cliente"]
-                        short_name = guest[:18] + "..." if len(guest) > 18 else guest
-                        label = f"🔴 {table_name}\n{short_name}"
-                    else:
-                        label = f"🟢 {table_name}\nDisponibile"
+                    label = _build_table_button_label(table_name, reservation)
 
                     btn_type = "primary" if is_occupied else "secondary"
                     if st.button(
@@ -812,11 +851,14 @@ def _render_empty(table_name, selected_date, selected_slot):
             col1, col2 = st.columns(2)
             with col1:
                 cliente = st.text_input("Nome Cliente *", placeholder="Nome e cognome")
+                telefono = st.text_input("Telefono", placeholder="Facoltativo")
                 fonte = st.selectbox("Fonte", BOOKING_SOURCES)
             with col2:
                 data_res = st.date_input("Data", value=selected_date, format="DD/MM/YYYY")
                 fascia = st.selectbox("Fascia Oraria", TIME_SLOTS,
                                       index=TIME_SLOTS.index(selected_slot))
+                numero_persone = st.text_input("Numero persone", placeholder="Solo numeri")
+                compleanno = st.checkbox("Compleanno")
 
             col_ok, col_no = st.columns(2)
             with col_ok:
@@ -827,9 +869,20 @@ def _render_empty(table_name, selected_date, selected_slot):
             if submitted:
                 if not cliente.strip():
                     st.error("Nome obbligatorio!")
+                elif numero_persone.strip() and not numero_persone.strip().isdigit():
+                    st.error("Il numero persone deve contenere solo cifre.")
                 else:
                     data_str = data_res.strftime("%d-%m-%Y")
-                    if add_reservation(table_name, cliente.strip(), data_str, fascia, fonte):
+                    if add_reservation(
+                        table_name,
+                        cliente.strip(),
+                        data_str,
+                        fascia,
+                        fonte,
+                        telefono=telefono,
+                        numero_persone=numero_persone,
+                        compleanno=compleanno,
+                    ):
                         st.success(f"✅ Prenotato: {cliente} → Tavolo {table_name}")
                         load_reservations.clear()
                         st.session_state.show_modal = False
@@ -849,12 +902,26 @@ def _render_empty(table_name, selected_date, selected_slot):
 
 def _render_occupied(reservation, table_name, selected_date, selected_slot):
     is_admin = st.session_state.role == "admin"
+    telefono = _sanitize_optional_phone(reservation.get("Telefono", ""))
+    numero_persone = _sanitize_optional_people(reservation.get("Numero_Persone", ""))
+    compleanno = _is_birthday_flag(reservation.get("Compleanno", ""))
+    details = []
+    if numero_persone:
+        details.append(f"{numero_persone} persone")
+    if telefono:
+        details.append(f"Tel. {telefono}")
+    if compleanno:
+        details.append("Compleanno 🎂")
+    details_markup = " &middot; ".join(details)
 
     st.markdown(f"""
     <div style="background:var(--bg-card); border:1px solid rgba(197,165,90,0.3);
                 border-radius:10px; padding:0.8rem 1rem; margin-bottom:0.8rem;">
         <div style="color:var(--gold); font-weight:700; font-size:1.05rem;">
-            {reservation['Cliente']}
+            {reservation['Cliente']}{' 🎂' if compleanno else ''}
+        </div>
+        <div style="color:var(--text-primary); font-size:0.82rem; margin-top:6px;">
+            {details_markup if details_markup else 'Nessun dettaglio aggiuntivo'}
         </div>
         <div style="color:var(--text-muted); font-size:0.75rem; margin-top:3px;">
             {reservation['Fonte_Prenotazione']} &middot; ID: {reservation['ID']}
@@ -871,6 +938,7 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
                 col1, col2 = st.columns(2)
                 with col1:
                     cliente = st.text_input("Cliente", value=str(reservation["Cliente"]))
+                    telefono = st.text_input("Telefono", value=telefono)
                     fonte_idx = BOOKING_SOURCES.index(reservation["Fonte_Prenotazione"]) \
                         if reservation["Fonte_Prenotazione"] in BOOKING_SOURCES else 0
                     fonte = st.selectbox("Fonte", BOOKING_SOURCES, index=fonte_idx)
@@ -883,6 +951,8 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
                     fascia_idx = TIME_SLOTS.index(reservation["Fascia_Oraria"]) \
                         if reservation["Fascia_Oraria"] in TIME_SLOTS else 0
                     fascia = st.selectbox("Fascia", TIME_SLOTS, index=fascia_idx)
+                    numero_persone = st.text_input("Numero persone", value=numero_persone)
+                    compleanno = st.checkbox("Compleanno", value=compleanno)
 
                 tavolo_idx = ALL_TABLES.index(table_name) if table_name in ALL_TABLES else 0
                 nuovo_tavolo = st.selectbox("Sposta a tavolo", ALL_TABLES, index=tavolo_idx)
@@ -890,10 +960,15 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
                 if st.form_submit_button("Salva Modifiche", use_container_width=True, type="primary"):
                     if not cliente.strip():
                         st.error("Nome obbligatorio!")
+                    elif numero_persone.strip() and not numero_persone.strip().isdigit():
+                        st.error("Il numero persone deve contenere solo cifre.")
                     else:
                         data_str = data_res.strftime("%d-%m-%Y")
                         if update_reservation(reservation["ID"], nuovo_tavolo,
-                                              cliente.strip(), data_str, fascia, fonte):
+                                              cliente.strip(), data_str, fascia, fonte,
+                                              telefono=telefono,
+                                              numero_persone=numero_persone,
+                                              compleanno=compleanno):
                             st.success("✅ Aggiornato!")
                             load_reservations.clear()
                             st.session_state.show_modal = False
@@ -918,7 +993,12 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
                     st.session_state.selected_table = None
                     st.rerun()
     else:
-        st.info(f"Prenotato da: **{reservation['Cliente']}**")
+        summary = str(reservation["Cliente"])
+        if numero_persone:
+            summary += f" · {numero_persone} persone"
+        if compleanno:
+            summary += " · Compleanno 🎂"
+        st.info(f"Prenotato da: **{summary}**")
         if st.button("Chiudi", key="close_occ"):
             st.session_state.show_modal = False
             st.session_state.selected_table = None
@@ -997,7 +1077,7 @@ def main_dashboard():
         st.divider()
 
     # Mappa tavoli interattiva
-    st.caption("👇 Clicca un tavolo per prenotare o gestire. Nome tavolo e prenotazione sono mostrati nello stesso riquadro.")
+    st.caption("👇 Clicca un tavolo per prenotare o gestire. Ogni riquadro mostra tavolo, nome prenotazione e numero persone; il compleanno aggiunge la torta.")
     render_table_map(date_df, selected_slot)
 
     # DB completo (admin)
