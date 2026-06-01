@@ -362,7 +362,9 @@ FLOOR_PLAN_SVG = ASSET_FLOOR_PLAN_SVG
 # ─────────────────────────────────────────────────────────────
 def inject_custom_css():
     map_fullscreen = st.session_state.get("sidebar_visible", False)
-    block_padding = "0.2rem 0.35rem 0.35rem 0.35rem" if map_fullscreen else "1rem 2rem"
+    block_padding = "0" if map_fullscreen else "1rem 2rem"
+    app_overflow = "hidden" if map_fullscreen else "auto"
+    block_height = "100vh" if map_fullscreen else "auto"
     st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -384,6 +386,12 @@ def inject_custom_css():
             font-family: 'Inter', sans-serif;
             background: var(--bg-dark);
             color: var(--text-primary);
+            overflow: APP_OVERFLOW !important;
+        }
+
+        [data-testid="stAppViewContainer"],
+        section.main {
+            overflow: APP_OVERFLOW !important;
         }
 
         #MainMenu {visibility: hidden;}
@@ -393,6 +401,7 @@ def inject_custom_css():
         .block-container {
             padding: BLOCK_PADDING !important;
             max-width: 100% !important;
+            min-height: BLOCK_HEIGHT !important;
         }
 
         /* Brand Header */
@@ -482,24 +491,6 @@ def inject_custom_css():
             padding: 0.7rem 0.55rem !important;
         }
 
-        .map-shell {
-            height: calc(100vh - 0.55rem);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .map-toolbar-spacer {
-            min-height: 0.2rem;
-        }
-
-        .map-canvas {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .map-panel-title {
             color: #C5A55A;
             font-weight: 700;
@@ -577,7 +568,7 @@ def inject_custom_css():
             }
         }
     </style>
-    """.replace("BLOCK_PADDING", block_padding), unsafe_allow_html=True)
+    """.replace("BLOCK_PADDING", block_padding).replace("APP_OVERFLOW", app_overflow).replace("BLOCK_HEIGHT", block_height), unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -875,7 +866,7 @@ def build_sidebar_floor_plan_svg(date_df, selected_slot):
 def _render_svg_image(svg_markup, fullscreen=False):
     svg_base64 = base64.b64encode(svg_markup.encode("utf-8")).decode("ascii")
     image_style = (
-        "width:100%; max-width:1600px; max-height:calc(100vh - 54px); height:100%; display:block; margin:0 auto; object-fit:contain;"
+        "width:auto; max-width:100%; max-height:calc(100vh - 44px); height:auto; display:block; margin:0 auto; object-fit:contain;"
         if fullscreen else
         "width:100%; max-width:1600px; max-height:calc(100vh - 120px); height:auto; display:block; margin:0 auto; object-fit:contain;"
     )
@@ -1280,19 +1271,12 @@ def render_sidebar_map(date_df, selected_slot):
     if not st.session_state.sidebar_visible:
         return
     with st.container():
-        st.markdown('<div class="map-shell">', unsafe_allow_html=True)
-        close_spacer, close_col = st.columns([15, 1])
-        with close_spacer:
-            st.markdown('<div class="map-toolbar-spacer"></div>', unsafe_allow_html=True)
+        close_spacer, close_col = st.columns([20, 1])
         with close_col:
-            st.write("")
             if st.button("✕", key="close_map_panel", use_container_width=True, help="Chiudi mappa"):
                 st.session_state.sidebar_visible = False
                 st.rerun()
-        st.markdown('<div class="map-canvas">', unsafe_allow_html=True)
         _render_svg_image(build_sidebar_floor_plan_svg(date_df, selected_slot), fullscreen=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
