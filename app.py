@@ -10,6 +10,7 @@ from google.oauth2.service_account import Credentials
 import pandas as pd
 from datetime import datetime, date
 from pathlib import Path
+from html import escape
 import uuid
 import time
 from ui_assets import FLOOR_PLAN_SVG as ASSET_FLOOR_PLAN_SVG
@@ -63,6 +64,54 @@ ZONES = {
 ALL_TABLES = []
 for zone_data in ZONES.values():
     ALL_TABLES.extend(zone_data["tables"])
+
+SIDEBAR_TABLE_LAYOUTS = {
+    "S6": {"shape": "rect", "x": 40, "y": 42, "w": 55, "h": 35},
+    "S7": {"shape": "rect", "x": 130, "y": 42, "w": 65, "h": 38},
+    "S5": {"shape": "rect", "x": 40, "y": 86, "w": 55, "h": 35},
+    "S8": {"shape": "rect", "x": 130, "y": 86, "w": 65, "h": 38},
+    "privè2": {"shape": "rect", "x": 300, "y": 42, "w": 55, "h": 28},
+    "Privè3": {"shape": "rect", "x": 380, "y": 42, "w": 55, "h": 28},
+    "privè1": {"shape": "rect", "x": 300, "y": 80, "w": 55, "h": 28},
+    "Privè4": {"shape": "rect", "x": 380, "y": 80, "w": 55, "h": 28},
+    "S4": {"shape": "rect", "x": 6, "y": 172, "w": 36, "h": 24},
+    "O2": {"shape": "circle", "cx": 18, "cy": 218, "r": 11},
+    "S3": {"shape": "rect", "x": 18, "y": 238, "w": 36, "h": 22},
+    "S0": {"shape": "rect", "x": 6, "y": 275, "w": 32, "h": 22},
+    "A3": {"shape": "circle", "cx": 55, "cy": 286, "r": 10},
+    "O1": {"shape": "circle", "cx": 18, "cy": 340, "r": 11},
+    "S2": {"shape": "rect", "x": 18, "y": 360, "w": 36, "h": 22},
+    "S1": {"shape": "rect", "x": 6, "y": 420, "w": 36, "h": 24},
+    "4": {"shape": "rect", "x": 96, "y": 176, "w": 38, "h": 28},
+    "5": {"shape": "rect", "x": 150, "y": 176, "w": 38, "h": 28},
+    "14": {"shape": "rect", "x": 218, "y": 176, "w": 46, "h": 32},
+    "3": {"shape": "rect", "x": 96, "y": 220, "w": 38, "h": 28},
+    "7": {"shape": "rect", "x": 150, "y": 220, "w": 45, "h": 28},
+    "2": {"shape": "rect", "x": 96, "y": 262, "w": 38, "h": 28},
+    "8": {"shape": "rect", "x": 150, "y": 262, "w": 45, "h": 28},
+    "1": {"shape": "rect", "x": 96, "y": 320, "w": 38, "h": 28},
+    "10": {"shape": "rect", "x": 140, "y": 335, "w": 38, "h": 24},
+    "11": {"shape": "rect", "x": 218, "y": 320, "w": 46, "h": 32},
+    "V2": {"shape": "rect", "x": 302, "y": 172, "w": 42, "h": 24},
+    "15": {"shape": "rect", "x": 302, "y": 250, "w": 42, "h": 28},
+    "V1": {"shape": "rect", "x": 290, "y": 325, "w": 50, "h": 24},
+    "A2": {"shape": "circle", "cx": 370, "cy": 370, "r": 12},
+    "A1": {"shape": "circle", "cx": 410, "cy": 370, "r": 12},
+    "P4": {"shape": "path", "d": "M302 475 Q318 465 334 475 Q350 465 366 475 L366 492 Q350 482 334 492 Q318 482 302 492 Z", "cx": 334, "cy": 481},
+    "P1": {"shape": "path", "d": "M372 475 Q388 465 404 475 Q420 465 436 475 L436 492 Q420 482 404 492 Q388 482 372 492 Z", "cx": 404, "cy": 481},
+    "P9": {"shape": "path", "d": "M288 508 Q304 498 320 508 Q336 498 352 508 L352 525 Q336 515 320 525 Q304 515 288 525 Z", "cx": 320, "cy": 514},
+    "P7": {"shape": "path", "d": "M356 508 Q372 498 388 508 Q404 498 420 508 L420 525 Q404 515 388 525 Q372 515 356 525 Z", "cx": 388, "cy": 514},
+    "P5": {"shape": "path", "d": "M424 508 Q440 498 456 508 Q472 498 488 508 L488 525 Q472 515 456 525 Q440 515 424 525 Z", "cx": 456, "cy": 514},
+    "P2": {"shape": "path", "d": "M492 508 Q508 498 524 508 Q540 498 556 508 L556 525 Q540 515 524 525 Q508 515 492 525 Z", "cx": 524, "cy": 514},
+    "P10": {"shape": "path", "d": "M288 541 Q304 531 320 541 Q336 531 352 541 L352 558 Q336 548 320 558 Q304 548 288 558 Z", "cx": 320, "cy": 547},
+    "P8": {"shape": "path", "d": "M356 541 Q372 531 388 541 Q404 531 420 541 L420 558 Q404 548 388 558 Q372 548 356 558 Z", "cx": 388, "cy": 547},
+    "P6": {"shape": "path", "d": "M424 541 Q440 531 456 541 Q472 531 488 541 L488 558 Q472 548 456 558 Q440 548 424 558 Z", "cx": 456, "cy": 547},
+    "P3": {"shape": "path", "d": "M492 541 Q508 531 524 541 Q540 531 556 541 L556 558 Q540 548 524 558 Q508 548 492 558 Z", "cx": 524, "cy": 547},
+    "D4": {"shape": "rect", "x": 18, "y": 575, "w": 56, "h": 24},
+    "D3": {"shape": "rect", "x": 164, "y": 575, "w": 56, "h": 24},
+    "D2": {"shape": "rect", "x": 230, "y": 575, "w": 56, "h": 24},
+    "D1": {"shape": "rect", "x": 296, "y": 575, "w": 56, "h": 24},
+}
 
 TIME_SLOTS = ["Pranzo", "Aperitivo", "Night"]
 BOOKING_SOURCES = ["IG", "TikTok", "Facebook", "Twitter", "Telefono", "SMS", "Altro"]
@@ -613,6 +662,120 @@ def _build_table_button_label(table_name, reservation):
     return f"🔴 {table_name}\n{short_name}{birthday_icon}\n{people} persone"
 
 
+def build_occupied_map(date_df, selected_slot):
+    occupied_map = {}
+    for table_name in ALL_TABLES:
+        reservation = get_table_reservation_for_date(date_df, table_name, selected_slot)
+        if reservation is not None:
+            occupied_map[str(table_name)] = {
+                "cliente": str(reservation["Cliente"]),
+                "fascia": str(reservation["Fascia_Oraria"]),
+                "numero_persone": _sanitize_optional_people(reservation.get("Numero_Persone", "")),
+                "compleanno": _is_birthday_flag(reservation.get("Compleanno", "")),
+            }
+    return occupied_map
+
+
+def _build_sidebar_table_lines(table_name, reservation):
+    if reservation is None:
+        return [table_name, "LIBERO"]
+
+    guest = reservation["cliente"].strip() or "Prenotato"
+    short_name = guest[:11] + "..." if len(guest) > 11 else guest
+    if reservation["compleanno"]:
+        short_name += " 🎂"
+    people = reservation["numero_persone"] or "-"
+    return [table_name, short_name, f"{people} pax"]
+
+
+def build_sidebar_floor_plan_svg(date_df, selected_slot):
+    occupied_map = build_occupied_map(date_df, selected_slot)
+    svg_parts = [
+        """
+<svg viewBox="0 0 460 640" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%; height:auto; background:#fffdf8; border-radius:10px; border:1px solid #d7cfbf;">
+  <rect x="0" y="0" width="460" height="640" rx="10" fill="#fffdf8"/>
+  <text x="230" y="20" text-anchor="middle" font-family="Arial,sans-serif" font-size="11"
+        fill="#7b6138" font-weight="700" letter-spacing="1">MAPPA DISPONIBILITA'</text>
+  <text x="230" y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="8"
+        fill="#6f6f6f">Tavolo · Cliente · Persone · Compleanno</text>
+
+  <rect x="80" y="160" width="200" height="310" rx="5" fill="#fbf7ef" stroke="#d8c7a9" stroke-width="1.6"/>
+  <rect x="110" y="150" width="42" height="16" rx="3" fill="#c5975b"/>
+  <text x="131" y="162" text-anchor="middle" font-size="8" fill="white" font-weight="700">SALA</text>
+
+  <rect x="290" y="160" width="130" height="250" rx="5" fill="#f2f8f4" stroke="#b9d1ba" stroke-width="1.5"/>
+  <rect x="330" y="218" width="60" height="16" rx="3" fill="#5b8c5a"/>
+  <text x="360" y="230" text-anchor="middle" font-size="7" fill="white" font-weight="700">VERANDA</text>
+
+  <rect x="290" y="455" width="150" height="120" rx="5" fill="#fff6ec" stroke="#efc28d" stroke-width="1.5"/>
+  <rect x="336" y="443" width="58" height="16" rx="3" fill="#d4883e"/>
+  <text x="365" y="454" text-anchor="middle" font-size="7" fill="white" font-weight="700">PATIO</text>
+
+  <rect x="82" y="565" width="206" height="34" rx="5" fill="#f9f0f0" stroke="#ddbaba" stroke-width="1.5"/>
+  <text x="185" y="586" text-anchor="middle" font-size="12" fill="#a63d3d" font-weight="700">TIKI BAR</text>
+
+  <text x="42" y="150" font-size="7" fill="#4caf50" font-weight="700">BEACH</text>
+  <polygon points="10,148 40,142 40,154" fill="none" stroke="#4caf50" stroke-width="1"/>
+  <text x="405" y="148" font-size="7" fill="#e53935" font-weight="700">EXIT</text>
+  <polygon points="435,148 450,142 450,154" fill="none" stroke="#e53935" stroke-width="1"/>
+
+  <rect x="16" y="608" width="16" height="16" rx="4" fill="#e8fff1" stroke="#169b62" stroke-width="1.8"/>
+  <text x="40" y="620" font-size="9" fill="#2d4c3d" font-weight="700">Libero</text>
+  <rect x="102" y="608" width="16" height="16" rx="4" fill="#ffe6e2" stroke="#d83f3f" stroke-width="1.8"/>
+  <text x="126" y="620" font-size="9" fill="#6c2d2d" font-weight="700">Occupato</text>
+"""
+    ]
+
+    for table_name, layout in SIDEBAR_TABLE_LAYOUTS.items():
+        reservation = occupied_map.get(table_name)
+        is_occupied = reservation is not None
+        fill = "#FFE6E2" if is_occupied else "#E8FFF1"
+        stroke = "#D83F3F" if is_occupied else "#169B62"
+        text_color = "#6C2D2D" if is_occupied else "#174E34"
+        lines = _build_sidebar_table_lines(table_name, reservation)
+
+        if layout["shape"] == "rect":
+            x = layout["x"]
+            y = layout["y"]
+            w = layout["w"]
+            h = layout["h"]
+            cx = x + (w / 2)
+            cy = y + (h / 2)
+            svg_parts.append(
+                f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="4" fill="{fill}" stroke="{stroke}" stroke-width="1.8"/>'
+            )
+            font_size = 8 if h >= 32 else 7
+        elif layout["shape"] == "circle":
+            cx = layout["cx"]
+            cy = layout["cy"]
+            radius = layout["r"]
+            svg_parts.append(
+                f'<circle cx="{cx}" cy="{cy}" r="{radius}" fill="{fill}" stroke="{stroke}" stroke-width="1.8"/>'
+            )
+            font_size = 6
+        else:
+            cx = layout["cx"]
+            cy = layout["cy"]
+            svg_parts.append(
+                f'<path d="{layout["d"]}" fill="{fill}" stroke="{stroke}" stroke-width="1.6"/>'
+            )
+            font_size = 6
+
+        total_lines = len(lines)
+        line_gap = font_size + 1
+        first_line_y = cy - ((total_lines - 1) * line_gap / 2) + (font_size / 2) - 1
+        for idx, line in enumerate(lines):
+            weight = "700" if idx == 0 else "600"
+            svg_parts.append(
+                f'<text x="{cx}" y="{first_line_y + idx * line_gap}" text-anchor="middle" '
+                f'font-family="Arial,sans-serif" font-size="{font_size}" fill="{text_color}" font-weight="{weight}">{escape(line)}</text>'
+            )
+
+    svg_parts.append("</svg>")
+    return "\n".join(svg_parts)
+
+
 def add_reservation(table, cliente, data_str, fascia, fonte, telefono="", numero_persone="", compleanno=False):
     df = _read_sheet_fresh()
     # Confronto come stringhe
@@ -745,16 +908,7 @@ def render_stats(filtered_df):
 # MAPPA TAVOLI (bottoni interattivi)
 # ─────────────────────────────────────────────────────────────
 def render_table_map(date_df, selected_slot):
-    occupied_map = {}
-    for table_name in ALL_TABLES:
-        reservation = get_table_reservation_for_date(date_df, table_name, selected_slot)
-        if reservation is not None:
-            occupied_map[str(table_name)] = {
-                "cliente": str(reservation["Cliente"]),
-                "fascia": str(reservation["Fascia_Oraria"]),
-                "numero_persone": _sanitize_optional_people(reservation.get("Numero_Persone", "")),
-                "compleanno": _is_birthday_flag(reservation.get("Compleanno", "")),
-            }
+    occupied_map = build_occupied_map(date_df, selected_slot)
 
     for zone_name, zone_data in ZONES.items():
         color = zone_data["color"]
@@ -1009,7 +1163,7 @@ def _render_occupied(reservation, table_name, selected_date, selected_slot):
 # SIDEBAR — Mappa planimetria (solo riferimento visivo)
 # Sidebar inizia chiusa, si apre con il bottone 🗺️
 # ─────────────────────────────────────────────────────────────
-def render_sidebar_map():
+def render_sidebar_map(date_df, selected_slot):
     if not st.session_state.sidebar_visible:
         return
     with st.sidebar:
@@ -1018,21 +1172,18 @@ def render_sidebar_map():
             <span style="color:#C5A55A; font-weight:700; font-size:0.95rem;
                          letter-spacing:1px;">🗺️ MAPPA SALA</span>
             <div style="color:#8B8B8B; font-size:0.65rem; margin-top:3px;">
-                Posizione tavoli · Summer 2026
+                Disponibilita' a colpo d'occhio · Summer 2026
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if LAYOUT_IMAGE_FILE.exists():
-            st.image(str(LAYOUT_IMAGE_FILE), use_container_width=True)
-        else:
-            st.markdown(FLOOR_PLAN_SVG, unsafe_allow_html=True)
+        st.caption(f"{selected_slot} · colori netti tra libero e occupato")
+        st.markdown(build_sidebar_floor_plan_svg(date_df, selected_slot), unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────
 # DASHBOARD
 # ─────────────────────────────────────────────────────────────
 def main_dashboard():
-    render_sidebar_map()
     render_header()
 
     with st.container(border=True):
@@ -1067,6 +1218,8 @@ def main_dashboard():
     df = load_reservations()
     selected_date_str = selected_date.strftime("%d-%m-%Y")
     date_df = get_reservations_for_date(df, selected_date_str)
+
+    render_sidebar_map(date_df, selected_slot)
 
     render_stats(date_df)
 
