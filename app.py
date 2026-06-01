@@ -10,6 +10,7 @@ from google.oauth2.service_account import Credentials
 import pandas as pd
 from datetime import datetime, date
 from pathlib import Path
+import base64
 from html import escape
 import uuid
 import time
@@ -776,6 +777,14 @@ def build_sidebar_floor_plan_svg(date_df, selected_slot):
     return "\n".join(svg_parts)
 
 
+def _render_svg_image(svg_markup):
+    svg_base64 = base64.b64encode(svg_markup.encode("utf-8")).decode("ascii")
+    st.markdown(
+        f'<img src="data:image/svg+xml;base64,{svg_base64}" style="width:100%; height:auto; display:block;" />',
+        unsafe_allow_html=True,
+    )
+
+
 def add_reservation(table, cliente, data_str, fascia, fonte, telefono="", numero_persone="", compleanno=False):
     df = _read_sheet_fresh()
     # Confronto come stringhe
@@ -1177,7 +1186,7 @@ def render_sidebar_map(date_df, selected_slot):
         </div>
         """, unsafe_allow_html=True)
         st.caption(f"{selected_slot} · colori netti tra libero e occupato")
-        st.markdown(build_sidebar_floor_plan_svg(date_df, selected_slot), unsafe_allow_html=True)
+        _render_svg_image(build_sidebar_floor_plan_svg(date_df, selected_slot))
 
 
 # ─────────────────────────────────────────────────────────────
